@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class HttpResponse {
 
+    public static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(HttpResponse.class);
     private static final String UTF_8 = "UTF-8";
-
     private String version;
     private int statusCode;
     private String reasonPhrase;
@@ -61,11 +61,11 @@ public class HttpResponse {
         byte[] result = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(getVersion()).append(" ").append(getStatusCode()).append(" ").append(getReasonPhrase()).append("\r\n");
+            stringBuilder.append(getVersion()).append(" ").append(getStatusCode()).append(" ").append(getReasonPhrase()).append(CR_LF);
             for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
-                stringBuilder.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+                stringBuilder.append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
             }
-            stringBuilder.append("\r\n");
+            stringBuilder.append(CR_LF);
             byteArrayOutputStream.write(stringBuilder.toString().getBytes());
             if (body != null) {
                 byteArrayOutputStream.write(body);

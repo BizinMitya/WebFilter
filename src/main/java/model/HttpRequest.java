@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class HttpRequest {
 
+    private static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(HttpRequest.class);
-
     private static final String OPTIONS = "OPTIONS";
     private static final String GET = "GET";
     private static final String HEAD = "HEAD";
@@ -26,7 +26,6 @@ public class HttpRequest {
     private static final String TRACE = "TRACE";
     private static final String CONNECT = "CONNECT";
     private static final String UTF_8 = "UTF-8";
-
     private String method;
     private String URI;
     private String version;
@@ -51,7 +50,7 @@ public class HttpRequest {
             StringBuilder body = new StringBuilder();
             String bodyLine;
             while (bufferedReader.ready() && (bodyLine = bufferedReader.readLine()) != null) {
-                body.append(bodyLine).append("\r\n");
+                body.append(bodyLine).append(CR_LF);
             }
             httpRequest.body = body.toString().getBytes(UTF_8);
             return httpRequest;
@@ -94,6 +93,41 @@ public class HttpRequest {
         return headers.getOrDefault("Host", null);
     }
 
+    private HttpRequestBase getRequestByMethod() {
+        switch (method) {
+            case GET: {
+                return new HttpGet(URI);
+            }
+            case POST: {
+                return new HttpPost(URI);
+            }
+            case PUT: {
+                return new HttpPut(URI);
+            }
+            case DELETE: {
+                return new HttpDelete(URI);
+            }
+            case OPTIONS: {
+                return new HttpOptions(URI);
+            }
+            case HEAD: {
+                return new HttpHead(URI);
+            }
+            case TRACE: {
+                return new HttpTrace(URI);
+            }
+            case PATCH: {
+                return new HttpPatch(URI);
+            }
+            case CONNECT: {
+                return null;
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+
     public HttpResponse doRequest() throws IOException {
         HttpResponse httpResponse = new HttpResponse();
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
@@ -102,60 +136,19 @@ public class HttpRequest {
                     .setRedirectsEnabled(false)
                     .setRelativeRedirectsAllowed(true)
                     .build();
-            HttpRequestBase request;
-            switch (method) {
-                case GET: {
-                    request = new HttpGet(URI);
-                    break;
+            HttpRequestBase request = getRequestByMethod();
+            if (request != null) {
+                request.setConfig(requestConfig);
+                addHeaders(request);
+                org.apache.http.HttpResponse response = client.execute(request);
+                httpResponse.setStatusCode(response.getStatusLine().getStatusCode());
+                httpResponse.setReasonPhrase(response.getStatusLine().getReasonPhrase());
+                httpResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
+                httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
+                if (response.getEntity() != null) {
+                    httpResponse.setBody(IOUtils.toByteArray(response.getEntity().getContent()));
+                    httpResponse.getHeaders().put("Transfer-Encoding", "identity");
                 }
-                case POST: {
-                    request = new HttpPost(URI);
-                    break;
-                }
-                case PUT: {
-                    request = new HttpPut(URI);
-                    break;
-                }
-                case DELETE: {
-                    request = new HttpDelete(URI);
-                    break;
-                }
-                case OPTIONS: {
-                    request = new HttpOptions(URI);
-                    break;
-                }
-                case HEAD: {
-                    request = new HttpHead(URI);
-                    break;
-                }
-                case TRACE: {
-                    request = new HttpTrace(URI);
-                    break;
-                }
-                case PATCH: {
-                    request = new HttpPatch(URI);
-                    break;
-                }
-                case CONNECT: {
-                    return httpResponse;
-                }
-                default: {
-                    //stub
-                    request = new HttpGet(URI);
-                }
-            }
-
-            request.setConfig(requestConfig);
-            addHeaders(request);
-            org.apache.http.HttpResponse response = client.execute(request);
-
-            httpResponse.setStatusCode(response.getStatusLine().getStatusCode());
-            httpResponse.setReasonPhrase(response.getStatusLine().getReasonPhrase());
-            httpResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
-            httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
-            if (response.getEntity() != null) {
-                httpResponse.setBody(IOUtils.toByteArray(response.getEntity().getContent()));
-                httpResponse.getHeaders().put("Transfer-Encoding", "identity");
             }
         }
         return httpResponse;
@@ -165,11 +158,11 @@ public class HttpRequest {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             String hexLength = Integer.toHexString(body.length);
             byteArrayOutputStream.write(hexLength.getBytes(encoding));
-            byteArrayOutputStream.write("\r\n".getBytes(encoding));
+            byteArrayOutputStream.write(CR_LF.getBytes(encoding));
             byteArrayOutputStream.write(body);
-            byteArrayOutputStream.write("\r\n".getBytes(encoding));
+            byteArrayOutputStream.write(CR_LF.getBytes(encoding));
             byteArrayOutputStream.write(Integer.toHexString(0).getBytes(encoding));
-            byteArrayOutputStream.write("\r\n".getBytes(encoding));
+            byteArrayOutputStream.write(CR_LF.getBytes(encoding));
             byteArrayOutputStream.flush();
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
