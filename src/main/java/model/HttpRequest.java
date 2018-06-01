@@ -4,16 +4,21 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
 
+    private static final String TRANSFER_ENCODING = "Transfer-Encoding";
+    private static final String IDENTITY = "identity";
+    private static final String CONTENT_LENGTH = "Content-Length";
     private static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(HttpRequest.class);
     private static final String OPTIONS = "OPTIONS";
@@ -26,6 +31,7 @@ public class HttpRequest {
     private static final String TRACE = "TRACE";
     private static final String CONNECT = "CONNECT";
     private static final String UTF_8 = "UTF-8";
+    private static final int TIMEOUT = 10_000;//таймаут на чтение данных от сервера
     private String method;
     private String URI;
     private String version;
@@ -36,28 +42,26 @@ public class HttpRequest {
         headers = new HashMap<>();
     }
 
-    public static HttpRequest readHttpRequest(InputStream inputStream) {
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
-            HttpRequest httpRequest = new HttpRequest();
-            String startLine = bufferedReader.readLine();
-            parseStartLine(httpRequest, startLine);
-            String header = bufferedReader.readLine();
-            while (header.length() > 0) {
-                parseHeader(httpRequest, header);
-                header = bufferedReader.readLine();
-            }
-            StringBuilder body = new StringBuilder();
-            String bodyLine;
-            while (bufferedReader.ready() && (bodyLine = bufferedReader.readLine()) != null) {
-                body.append(bodyLine).append(CR_LF);
-            }
-            httpRequest.body = body.toString().getBytes(UTF_8);
-            return httpRequest;
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+    public static HttpRequest readHttpRequest(InputStream inputStream) throws IOException {
+        HttpRequest httpRequest = new HttpRequest();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
+        String startLine = bufferedReader.readLine();
+        if (startLine == null) {
+            throw new SocketException();
         }
-        return null;
+        parseStartLine(httpRequest, startLine);
+        String header = bufferedReader.readLine();
+        while (header.length() > 0) {
+            parseHeader(httpRequest, header);
+            header = bufferedReader.readLine();
+        }
+        if (httpRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
+            int contentLength = Integer.parseInt(httpRequest.getHeaders().get(CONTENT_LENGTH));
+            char[] body = new char[contentLength];
+            bufferedReader.read(body);
+            httpRequest.body = new String(body).getBytes(UTF_8);
+        }
+        return httpRequest;
     }
 
     private static void parseStartLine(HttpRequest httpRequest, String startLine) {
@@ -77,7 +81,9 @@ public class HttpRequest {
 
     private void addHeaders(org.apache.http.HttpRequest request) {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            request.addHeader(entry.getKey(), entry.getValue());
+            if (!entry.getKey().equals(CONTENT_LENGTH)) {//устанавливается автоматически при установки байтового массива body
+                request.addHeader(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -99,10 +105,16 @@ public class HttpRequest {
                 return new HttpGet(URI);
             }
             case POST: {
-                return new HttpPost(URI);
+                HttpPost httpPost = new HttpPost(URI);
+                ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
+                httpPost.setEntity(byteArrayEntity);
+                return httpPost;
             }
             case PUT: {
-                return new HttpPut(URI);
+                HttpPut httpPut = new HttpPut(URI);
+                ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
+                httpPut.setEntity(byteArrayEntity);
+                return httpPut;
             }
             case DELETE: {
                 return new HttpDelete(URI);
@@ -117,7 +129,10 @@ public class HttpRequest {
                 return new HttpTrace(URI);
             }
             case PATCH: {
-                return new HttpPatch(URI);
+                HttpPatch httpPatch = new HttpPatch(URI);
+                ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
+                httpPatch.setEntity(byteArrayEntity);
+                return httpPatch;
             }
             case CONNECT: {
                 return null;
@@ -135,6 +150,9 @@ public class HttpRequest {
                     .setCircularRedirectsAllowed(true)
                     .setRedirectsEnabled(false)
                     .setRelativeRedirectsAllowed(true)
+                    .setConnectTimeout(TIMEOUT)
+                    .setSocketTimeout(TIMEOUT)
+                    .setConnectionRequestTimeout(TIMEOUT)
                     .build();
             HttpRequestBase request = getRequestByMethod();
             if (request != null) {
@@ -147,7 +165,9 @@ public class HttpRequest {
                 httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
                 if (response.getEntity() != null) {
                     httpResponse.setBody(IOUtils.toByteArray(response.getEntity().getContent()));
-                    httpResponse.getHeaders().put("Transfer-Encoding", "identity");
+                    if (httpResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
+                        httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY);
+                    }
                 }
             }
         }

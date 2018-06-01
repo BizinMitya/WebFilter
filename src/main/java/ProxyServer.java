@@ -7,7 +7,7 @@ public class ProxyServer implements Proxy {
 
     @Override
     public HttpResponse toServer(HttpRequest httpRequest) throws IOException {
-        System.out.println(httpRequest.getURI());
+        System.out.println(httpRequest.getMethod() + " " + httpRequest.getURI());
         return httpRequest.doRequest();
     }
 

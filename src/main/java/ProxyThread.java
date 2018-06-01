@@ -4,18 +4,20 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import static model.HttpRequest.readHttpRequest;
 
 public class ProxyThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(ProxyThread.class);
-    //браузер не принимает ответ от прокси
-    private static final String SOCKET_WRITE_ERROR = "Software caused connection abort: socket write error";
+    private static final int TIMEOUT = 10_000;//таймаут на чтение данных от клиента (браузера)
 
     private Socket socket;
 
-    public ProxyThread(Socket socket) {
+    public ProxyThread(Socket socket) throws SocketException {
+        socket.setSoTimeout(TIMEOUT);
         this.socket = socket;
     }
 
@@ -35,11 +37,9 @@ public class ProxyThread implements Runnable {
             socket.getOutputStream().write(httpResponseToClient.getAllResponseInBytes());//отправка запроса обратно браузеру
             socket.getOutputStream().flush();
         } catch (IOException e) {
-            if (!SOCKET_WRITE_ERROR.equals(e.getMessage())) {
+            if (!(e instanceof SocketException) && !(e instanceof SocketTimeoutException)) {
                 LOGGER.error(e.getMessage(), e);
             }
-        } catch (NullPointerException ignored) {
-
         } finally {
             try {
                 socket.close();

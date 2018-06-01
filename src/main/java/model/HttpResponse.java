@@ -10,9 +10,10 @@ import java.util.Map;
 
 public class HttpResponse {
 
-    public static final String CR_LF = "\r\n";
+    private static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(HttpResponse.class);
     private static final String UTF_8 = "UTF-8";
+    private static final String CONTENT_TYPE = "Content-Type";
     private String version;
     private int statusCode;
     private String reasonPhrase;
@@ -23,21 +24,6 @@ public class HttpResponse {
         headers = new HashMap<>();
     }
 
-    private static void parseStartLine(HttpResponse httpResponse, String startLine) {
-        String[] startLineParameters = startLine.split(" ");
-        httpResponse.version = startLineParameters[0];
-        httpResponse.statusCode = Integer.parseInt(startLineParameters[1]);
-        httpResponse.reasonPhrase = startLineParameters[2];
-    }
-
-    private static void parseHeader(HttpResponse httpResponse, String header) {
-        int idx = header.indexOf(":");
-        if (idx == -1) {
-            LOGGER.error("Invalid Header Parameter: " + header);
-        }
-        httpResponse.headers.put(header.substring(0, idx), header.substring(idx + 2, header.length()));
-    }
-
     public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {
         String bodyString = new String(body, this.getEncoding());
         bodyString = bodyString.replace(target, replacement);
@@ -45,7 +31,7 @@ public class HttpResponse {
     }
 
     public String getEncoding() {
-        String contentType = headers.get("Content-Type");
+        String contentType = headers.get(CONTENT_TYPE);
         if (contentType != null) {
             String[] values = contentType.split("; ");
             for (String value : values) {
