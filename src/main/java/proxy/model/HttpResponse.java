@@ -1,4 +1,4 @@
-package model;
+package proxy.model;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -44,6 +44,7 @@ public class HttpResponse {
     }
 
     public String getEncoding() {
+        //TODO: разобраться с этим методом! Какой-то мутный...
         String contentType = headers.get(CONTENT_TYPE);
         if (contentType != null) {
             String charset = getCharsetFromContent(contentType);

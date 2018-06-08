@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <link rel="stylesheet" href="../lib/css/bootstrap.css">
+    <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.ico">
+    <script type="text/javascript" src="../lib/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../lib/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">WebFilter</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Главная</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Журнал событий</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="manage.html">Управление</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="settings.html">Настройки</a>
+            </li>
+            <li class="nav-item">
+                <div class="navbar-text" id="status"></div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="readFromServerErrorAlert">
+</div>
+<div class="ml-5 mt-5 mr-5 mb-5">
+    <div class="text-body">
+        <h1 class="display-4">WebFilter</h1>
+        <p class="lead">Веб прокси-сервер для фильтрации и контроля трафика</p>
+    </div>
+</div>
+</body>
+</html>

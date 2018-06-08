@@ -1,4 +1,4 @@
-package model;
+package proxy.model;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -13,6 +13,8 @@ import java.io.*;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static util.SettingsUtil.*;
 
 public class HttpRequest {
 
@@ -31,7 +33,7 @@ public class HttpRequest {
     private static final String TRACE = "TRACE";
     private static final String CONNECT = "CONNECT";
     private static final String UTF_8 = "UTF-8";
-    private static final int TIMEOUT = 10_000;//таймаут на чтение данных от сервера
+    private int timeoutForServer;//таймаут на чтение данных от сервера
     private String method;
     private String URI;
     private String version;
@@ -40,6 +42,7 @@ public class HttpRequest {
 
     public HttpRequest() {
         headers = new HashMap<>();
+        setSettings();
     }
 
     public static HttpRequest readHttpRequest(InputStream inputStream) throws IOException {
@@ -74,9 +77,26 @@ public class HttpRequest {
     private static void parseHeader(HttpRequest httpRequest, String header) {
         int idx = header.indexOf(":");
         if (idx == -1) {
-            LOGGER.error("Invalid Header Parameter: " + header);
+            LOGGER.error("Некорректный параметр заголовка: " + header);
         }
         httpRequest.headers.put(header.substring(0, idx), header.substring(idx + 2, header.length()));
+    }
+
+    private void setSettings() {
+        String timeoutForServerString = getSettingByName(TIMEOUT_FOR_SERVER, String.valueOf(DEFAULT_TIMEOUT_FOR_SERVER));
+        if (timeoutForServerString == null) {
+            timeoutForServer = DEFAULT_TIMEOUT_FOR_SERVER;
+            LOGGER.warn(String.format("Значение таймаута для сервера не установлено! Установлено значение по умолчанию: %d",
+                    DEFAULT_TIMEOUT_FOR_SERVER));
+        } else {
+            try {
+                timeoutForServer = Integer.parseInt(timeoutForServerString);
+            } catch (NumberFormatException e) {
+                LOGGER.warn(String.format("Значение таймаута для сервера (%s) некорректно! Установлено значение по умолчанию: %d",
+                        timeoutForServerString, DEFAULT_TIMEOUT_FOR_SERVER), e);
+                timeoutForServer = DEFAULT_TIMEOUT_FOR_SERVER;
+            }
+        }
     }
 
     private void addHeaders(org.apache.http.HttpRequest request) {
@@ -150,9 +170,9 @@ public class HttpRequest {
                     .setCircularRedirectsAllowed(true)
                     .setRedirectsEnabled(false)
                     .setRelativeRedirectsAllowed(true)
-                    .setConnectTimeout(TIMEOUT)
-                    .setSocketTimeout(TIMEOUT)
-                    .setConnectionRequestTimeout(TIMEOUT)
+                    .setConnectTimeout(timeoutForServer)
+                    .setSocketTimeout(timeoutForServer)
+                    .setConnectionRequestTimeout(timeoutForServer)
                     .build();
             HttpRequestBase request = getRequestByMethod();
             if (request != null) {
