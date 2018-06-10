@@ -1,5 +1,3 @@
-package web;
-
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -30,6 +28,7 @@ public class Main {
 
             server.setHandler(handlers);
             server.start();
+            LOGGER.info("WebFilter запущен");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -38,9 +37,9 @@ public class Main {
     private static void addServlets(ServletHandler servletHandler) {
         servletHandler.addServletWithMapping(StartProxyServlet.class, "/proxy/start");
         servletHandler.addServletWithMapping(StopProxyServlet.class, "/proxy/stop");
-        servletHandler.addServletWithMapping(RestartProxyServlet.class, "/proxy/restart");
         servletHandler.addServletWithMapping(StatusProxyServlet.class, "/proxy/status");
         servletHandler.addServletWithMapping(SettingsProxyServlet.class, "/proxy/settings");
+        servletHandler.addServletWithMapping(LogsServlet.class, "/logs");
     }
 
 }

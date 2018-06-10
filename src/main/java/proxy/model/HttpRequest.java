@@ -8,19 +8,23 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
+import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.apache.http.entity.ContentType.TEXT_HTML;
+import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 import static util.SettingsUtil.*;
 
 public class HttpRequest {
 
-    private static final String TRANSFER_ENCODING = "Transfer-Encoding";
-    private static final String IDENTITY = "identity";
-    private static final String CONTENT_LENGTH = "Content-Length";
     private static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(HttpRequest.class);
     private static final String OPTIONS = "OPTIONS";
@@ -32,7 +36,9 @@ public class HttpRequest {
     private static final String DELETE = "DELETE";
     private static final String TRACE = "TRACE";
     private static final String CONNECT = "CONNECT";
-    private static final String UTF_8 = "UTF-8";
+    private static final String CHARSET = "charset";
+    private static final String CONTENT = "content";
+    private static final String HTTP_EQUIV = "http-equiv";
     private int timeoutForServer;//таймаут на чтение данных от сервера
     private String method;
     private String URI;
@@ -184,14 +190,63 @@ public class HttpRequest {
                 httpResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
                 httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
                 if (response.getEntity() != null) {
-                    httpResponse.setBody(IOUtils.toByteArray(response.getEntity().getContent()));
+                    byte[] body = IOUtils.toByteArray(response.getEntity().getContent());
+                    String contentType = response.getEntity().getContentType().getValue();
+                    httpResponse.setBody(body);
+                    httpResponse.setMimeType(getMimeTypeFromContentType(contentType));
+                    httpResponse.setBodyEncoding(getEncoding(body, contentType));
                     if (httpResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
-                        httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY);
+                        httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
                     }
                 }
             }
         }
         return httpResponse;
+    }
+
+    private String getCharsetFromContentType(String contentType) {
+        String[] values = contentType.split("; ");
+        for (String value : values) {
+            if (value.startsWith(CHARSET)) {
+                return value.split("=")[1];
+            }
+        }
+        return null;
+    }
+
+    private String getMimeTypeFromContentType(String contentType) {
+        String[] values = contentType.split("; ");
+        for (String value : values) {
+            if (!value.startsWith(CHARSET)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public String getEncoding(byte[] body, String contentType) {
+        if (contentType != null) {
+            String charset = getCharsetFromContentType(contentType);
+            if (charset != null) {
+                return charset;
+            }
+        }
+        if (TEXT_HTML.getMimeType().equals(contentType)) {
+            Elements charsetElements = Jsoup.parse(new String(body)).head().getElementsByAttribute(CHARSET);
+            if (!charsetElements.isEmpty()) {
+                return charsetElements.get(0).attr(CHARSET);
+            } else {
+                Elements httpEquivElements = Jsoup.parse(new String(body)).head().getElementsByAttribute(HTTP_EQUIV);
+                if (!httpEquivElements.isEmpty()) {
+                    String content = httpEquivElements.get(0).attr(CONTENT);
+                    String charset = getCharsetFromContentType(content);
+                    if (charset != null) {
+                        return charset;
+                    }
+                }
+            }
+        }
+        return UTF_8.toString();
     }
 
     private byte[] doChunk(byte[] body, String encoding) {

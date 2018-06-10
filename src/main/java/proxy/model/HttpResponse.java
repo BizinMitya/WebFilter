@@ -1,8 +1,6 @@
 package proxy.model;
 
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,62 +8,42 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.http.entity.ContentType.*;
+
 public class HttpResponse {
 
     private static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(HttpResponse.class);
-    private static final String UTF_8 = "UTF-8";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String TEXT_HTML = "text/html";
     private String version;
     private int statusCode;
     private String reasonPhrase;
     private Map<String, String> headers;
     private byte[] body;
+    private String bodyEncoding;
+    private String mimeType;
 
     public HttpResponse() {
         headers = new HashMap<>();
     }
 
     public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {
-        String bodyString = new String(body, getEncoding());
-        bodyString = bodyString.replace(target, replacement);
-        this.body = bodyString.getBytes(getEncoding());
+        if (mimeType.equals(TEXT_HTML.getMimeType()) ||
+                mimeType.equals(TEXT_XML.getMimeType()) ||
+                mimeType.equals(TEXT_PLAIN.getMimeType()) ||
+                mimeType.equals(APPLICATION_JSON.getMimeType()) ||
+                mimeType.equals(APPLICATION_XML.getMimeType())) {
+            String bodyString = new String(body, bodyEncoding);
+            bodyString = bodyString.replace(target, replacement);
+            this.body = bodyString.getBytes(bodyEncoding);
+        }
     }
 
-    private String getCharsetFromContent(String content) {
-        String[] values = content.split("; ");
-        for (String value : values) {
-            if (value.startsWith("charset")) {
-                return value.split("=")[1];
-            }
-        }
-        return null;
+    public String getBodyEncoding() {
+        return bodyEncoding;
     }
 
-    public String getEncoding() {
-        //TODO: разобраться с этим методом! Какой-то мутный...
-        String contentType = headers.get(CONTENT_TYPE);
-        if (contentType != null) {
-            String charset = getCharsetFromContent(contentType);
-            if (charset != null) {
-                return charset;
-            }
-        }
-        if (TEXT_HTML.equals(contentType)) {
-            String encoding = Jsoup.parse(new String(body)).head().getElementsByAttribute("charset").get(0).attr("charset");
-            if (encoding.isEmpty()) {
-                Element httpEquivElement = Jsoup.parse(new String(body)).head().getElementsByAttribute("http-equiv").get(0);
-                String content = httpEquivElement.attr("content");
-                String charset = getCharsetFromContent(content);
-                if (charset != null) {
-                    return charset;
-                }
-            } else {
-                return encoding;
-            }
-        }
-        return UTF_8;
+    public void setBodyEncoding(String bodyEncoding) {
+        this.bodyEncoding = bodyEncoding;
     }
 
     public byte[] getAllResponseInBytes() {
@@ -77,7 +55,7 @@ public class HttpResponse {
                 stringBuilder.append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
             }
             stringBuilder.append(CR_LF);
-            byteArrayOutputStream.write(stringBuilder.toString().getBytes(getEncoding()));
+            byteArrayOutputStream.write(stringBuilder.toString().getBytes(/*getEncoding()*/));
             if (body != null) {
                 byteArrayOutputStream.write(body);
             }
@@ -127,5 +105,13 @@ public class HttpResponse {
 
     public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

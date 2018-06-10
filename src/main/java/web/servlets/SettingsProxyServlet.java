@@ -12,18 +12,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static util.SettingsUtil.*;
 
 public class SettingsProxyServlet extends HttpServlet {
 
-    private static final String UTF_8 = "UTF-8";
     private static final Logger LOGGER = Logger.getLogger(SettingsProxyServlet.class);
     private Proxy proxy = Proxy.getInstance();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             Map<String, String> settings = getAllSettingsAsMap();
-            response.setCharacterEncoding(UTF_8);
+            response.setCharacterEncoding(UTF_8.toString());
             response.getWriter().write(new JSONObject(settings).toString());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
@@ -32,7 +32,7 @@ public class SettingsProxyServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
-            request.setCharacterEncoding(UTF_8);
+            request.setCharacterEncoding(UTF_8.toString());
             JSONObject settingsJson = new JSONObject(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
             saveSettingsWithValidation(settingsJson);
             if (proxy.isRunning()) {
@@ -76,6 +76,7 @@ public class SettingsProxyServlet extends HttpServlet {
         properties.setProperty(TIMEOUT_FOR_CLIENT, String.valueOf(timeoutForClient));
         properties.setProperty(TIMEOUT_FOR_SERVER, String.valueOf(timeoutForServer));
         saveAllSettings(properties);
+        LOGGER.info("Настройки успешно сохранены");
     }
 
 }

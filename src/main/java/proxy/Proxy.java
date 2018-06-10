@@ -67,7 +67,7 @@ public class Proxy {
 
     public synchronized void stop() {
         try {
-            if (!serverSocket.isClosed()) {
+            if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
                 LOGGER.info("Прокси-сервер остановлен");
             }

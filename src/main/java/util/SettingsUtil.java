@@ -30,7 +30,7 @@ public abstract class SettingsUtil {
     public static final int MAX_TIMEOUT_FOR_SERVER = 60_000;
 
     private static final Logger LOGGER = Logger.getLogger(SettingsUtil.class);
-    private static String fileSettingsName = SettingsUtil.class.getResource("/settings.properties").getPath();
+    private static String fileSettingsName = "settings/settings.properties";
 
     public static String getSettingByName(String settingName, String defaultValue) {
         try (FileInputStream fileInputStream = new FileInputStream(fileSettingsName)) {
