@@ -107,7 +107,7 @@ public class HttpRequest {
 
     private void addHeaders(org.apache.http.HttpRequest request) {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            if (!entry.getKey().equals(CONTENT_LENGTH)) {//устанавливается автоматически при установки байтового массива body
+            if (!CONTENT_LENGTH.equals(entry.getKey())) {//устанавливается автоматически при установки байтового массива body
                 request.addHeader(entry.getKey(), entry.getValue());
             }
         }
@@ -191,10 +191,13 @@ public class HttpRequest {
                 httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
                 if (response.getEntity() != null) {
                     byte[] body = IOUtils.toByteArray(response.getEntity().getContent());
-                    String contentType = response.getEntity().getContentType().getValue();
                     httpResponse.setBody(body);
-                    httpResponse.setMimeType(getMimeTypeFromContentType(contentType));
-                    httpResponse.setBodyEncoding(getEncoding(body, contentType));
+                    Header contentTypeHeader = response.getEntity().getContentType();
+                    if (contentTypeHeader != null) {
+                        String contentType = contentTypeHeader.getValue();
+                        httpResponse.setMimeType(getMimeTypeFromContentType(contentType));
+                        httpResponse.setBodyEncoding(getEncoding(body, contentType));
+                    }
                     if (httpResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
                         httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
                     }

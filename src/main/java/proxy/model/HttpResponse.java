@@ -27,11 +27,11 @@ public class HttpResponse {
     }
 
     public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {
-        if (mimeType.equals(TEXT_HTML.getMimeType()) ||
-                mimeType.equals(TEXT_XML.getMimeType()) ||
-                mimeType.equals(TEXT_PLAIN.getMimeType()) ||
-                mimeType.equals(APPLICATION_JSON.getMimeType()) ||
-                mimeType.equals(APPLICATION_XML.getMimeType())) {
+        if (TEXT_HTML.getMimeType().equals(mimeType) ||
+                TEXT_XML.getMimeType().equals(mimeType) ||
+                TEXT_PLAIN.getMimeType().equals(mimeType) ||
+                APPLICATION_JSON.getMimeType().equals(mimeType) ||
+                APPLICATION_XML.getMimeType().equals(mimeType)) {
             String bodyString = new String(body, bodyEncoding);
             bodyString = bodyString.replace(target, replacement);
             this.body = bodyString.getBytes(bodyEncoding);
