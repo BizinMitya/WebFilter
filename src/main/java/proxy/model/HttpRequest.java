@@ -8,6 +8,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
@@ -16,12 +17,12 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dao.SettingsDAO.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.entity.ContentType.TEXT_HTML;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
-import static util.SettingsUtil.*;
 
 public class HttpRequest {
 
@@ -89,20 +90,8 @@ public class HttpRequest {
     }
 
     private void setSettings() {
-        String timeoutForServerString = getSettingByName(TIMEOUT_FOR_SERVER, String.valueOf(DEFAULT_TIMEOUT_FOR_SERVER));
-        if (timeoutForServerString == null) {
-            timeoutForServer = DEFAULT_TIMEOUT_FOR_SERVER;
-            LOGGER.warn(String.format("Значение таймаута для сервера не установлено! Установлено значение по умолчанию: %d",
-                    DEFAULT_TIMEOUT_FOR_SERVER));
-        } else {
-            try {
-                timeoutForServer = Integer.parseInt(timeoutForServerString);
-            } catch (NumberFormatException e) {
-                LOGGER.warn(String.format("Значение таймаута для сервера (%s) некорректно! Установлено значение по умолчанию: %d",
-                        timeoutForServerString, DEFAULT_TIMEOUT_FOR_SERVER), e);
-                timeoutForServer = DEFAULT_TIMEOUT_FOR_SERVER;
-            }
-        }
+        String timeoutForServerString = getSettingByKey(TIMEOUT_FOR_SERVER, String.valueOf(DEFAULT_TIMEOUT_FOR_SERVER));
+        timeoutForServer = Integer.parseInt(timeoutForServerString);
     }
 
     private void addHeaders(org.apache.http.HttpRequest request) {
@@ -121,10 +110,12 @@ public class HttpRequest {
         return mapHeaders;
     }
 
+    @Nullable
     public String getHost() {
         return headers.getOrDefault("Host", null);
     }
 
+    @Nullable
     private HttpRequestBase getRequestByMethod() {
         switch (method) {
             case GET: {
@@ -253,6 +244,7 @@ public class HttpRequest {
     }
 
     private byte[] doChunk(byte[] body, String encoding) {
+        byte[] chunk = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             String hexLength = Integer.toHexString(body.length);
             byteArrayOutputStream.write(hexLength.getBytes(encoding));
@@ -262,11 +254,11 @@ public class HttpRequest {
             byteArrayOutputStream.write(Integer.toHexString(0).getBytes(encoding));
             byteArrayOutputStream.write(CR_LF.getBytes(encoding));
             byteArrayOutputStream.flush();
-            return byteArrayOutputStream.toByteArray();
+            chunk = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return null;
+        return chunk;
     }
 
     public String getMethod() {

@@ -1,5 +1,6 @@
 .idea/
 target/
 out/
-settings/
 logs/
+db/webfilter.mv.db
+db/webfilter.trace.db

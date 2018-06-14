@@ -9,8 +9,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import static dao.SettingsDAO.*;
 import static proxy.model.HttpRequest.readHttpRequest;
-import static util.SettingsUtil.*;
 
 /**
  * Поток для клиента прокси-сервера
@@ -29,20 +29,8 @@ public class ClientProxyThread implements Runnable {
     }
 
     private void setSettings() {
-        String timeoutForClientString = getSettingByName(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
-        if (timeoutForClientString == null) {
-            timeoutForClient = DEFAULT_TIMEOUT_FOR_CLIENT;
-            LOGGER.warn(String.format("Значение таймаута для клиента не установлено! Установлено значение по умолчанию: %d",
-                    DEFAULT_TIMEOUT_FOR_CLIENT));
-        } else {
-            try {
-                timeoutForClient = Integer.parseInt(timeoutForClientString);
-            } catch (NumberFormatException e) {
-                LOGGER.warn(String.format("Значение таймаута для клиента (%s) некорректно! Установлено значение по умолчанию: %d",
-                        timeoutForClientString, DEFAULT_TIMEOUT_FOR_CLIENT), e);
-                timeoutForClient = DEFAULT_TIMEOUT_FOR_CLIENT;
-            }
-        }
+        String timeoutForClientString = getSettingByKey(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
+        timeoutForClient = Integer.parseInt(timeoutForClientString);
     }
 
     /**

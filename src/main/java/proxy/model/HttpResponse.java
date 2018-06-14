@@ -8,7 +8,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.entity.ContentType.*;
+import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
+import static util.FileUtil.getHostInBlacklistPage;
 
 public class HttpResponse {
 
@@ -24,6 +28,18 @@ public class HttpResponse {
 
     public HttpResponse() {
         headers = new HashMap<>();
+    }
+
+    public static HttpResponse hostInBlacklistResponse() {
+        HttpResponse httpResponse = new HttpResponse();
+        httpResponse.setStatusCode(SC_OK);
+        httpResponse.setReasonPhrase("");
+        httpResponse.setVersion("HTTP/1.1");
+        httpResponse.setHeaders(new HashMap<>());
+        httpResponse.getHeaders().put(TRANSFER_ENCODING, IDENTITY.toString());
+        byte[] body = getHostInBlacklistPage();
+        httpResponse.setBody(body);
+        return httpResponse;
     }
 
     public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {

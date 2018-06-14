@@ -3,6 +3,10 @@ $(document).ready(function () {
     setInterval("checkStatus()", 1000);
 });
 
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip();//инициализация тултипов
+});
+
 function checkStatus() {
     $.ajax({
         url: "/proxy/status",
@@ -17,6 +21,7 @@ function checkStatus() {
         },
         error: function () {
             addReadFromServerErrorAlert();
+            $("#status").removeClass("text-success").addClass("text-danger").html("Прокси-сервер выключен");
         }
     });
 }

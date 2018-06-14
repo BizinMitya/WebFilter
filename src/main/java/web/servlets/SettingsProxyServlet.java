@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
+import static dao.SettingsDAO.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static util.SettingsUtil.*;
 
 public class SettingsProxyServlet extends HttpServlet {
 
@@ -22,11 +22,12 @@ public class SettingsProxyServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Map<String, String> settings = getAllSettingsAsMap();
+            Map<String, String> settings = getAllSettings();
             response.setCharacterEncoding(UTF_8.toString());
             response.getWriter().write(new JSONObject(settings).toString());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -38,7 +39,6 @@ public class SettingsProxyServlet extends HttpServlet {
             if (proxy.isRunning()) {
                 proxy.restart();
             }
-            response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -70,12 +70,12 @@ public class SettingsProxyServlet extends HttpServlet {
         if (timeoutForServer < MIN_TIMEOUT_FOR_SERVER || timeoutForServer > MAX_TIMEOUT_FOR_SERVER) {
             timeoutForServer = DEFAULT_TIMEOUT_FOR_SERVER;
         }
-        Properties properties = new Properties();
-        properties.setProperty(PROXY_PORT, String.valueOf(proxyPort));
-        properties.setProperty(THREADS_COUNT, String.valueOf(threadsCount));
-        properties.setProperty(TIMEOUT_FOR_CLIENT, String.valueOf(timeoutForClient));
-        properties.setProperty(TIMEOUT_FOR_SERVER, String.valueOf(timeoutForServer));
-        saveAllSettings(properties);
+        Map<String, String> allSettings = new HashMap<>();
+        allSettings.put(PROXY_PORT, String.valueOf(proxyPort));
+        allSettings.put(THREADS_COUNT, String.valueOf(threadsCount));
+        allSettings.put(TIMEOUT_FOR_CLIENT, String.valueOf(timeoutForClient));
+        allSettings.put(TIMEOUT_FOR_SERVER, String.valueOf(timeoutForServer));
+        updateAllSettings(allSettings);
         LOGGER.info("Настройки успешно сохранены");
     }
 

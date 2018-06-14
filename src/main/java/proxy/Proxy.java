@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import static util.SettingsUtil.*;
+import static dao.SettingsDAO.*;
 
 //singleton
 public class Proxy {
@@ -24,34 +24,10 @@ public class Proxy {
     }
 
     private void setSettings() {
-        String threadsCountString = getSettingByName(THREADS_COUNT, String.valueOf(DEFAULT_THREADS_COUNT));
-        if (threadsCountString == null) {
-            threadsCount = DEFAULT_THREADS_COUNT;
-            LOGGER.warn(String.format("Значение количества потоков для прокси-сервера не установлено! Установлено значение по умолчанию: %d",
-                    DEFAULT_THREADS_COUNT));
-        } else {
-            try {
-                threadsCount = Integer.parseInt(threadsCountString);
-            } catch (NumberFormatException e) {
-                LOGGER.warn(String.format("Значение количества потоков для прокси-сервера (%s) некорректно! Установлено значение по умолчанию: %d",
-                        threadsCountString, DEFAULT_THREADS_COUNT), e);
-                threadsCount = DEFAULT_THREADS_COUNT;
-            }
-        }
-        String proxyPortString = getSettingByName(PROXY_PORT, String.valueOf(DEFAULT_PROXY_PORT));
-        if (proxyPortString == null) {
-            proxyPort = DEFAULT_PROXY_PORT;
-            LOGGER.warn(String.format("Значение порта прокси-сервера не установлено! Установлено значение по умолчанию: %d",
-                    DEFAULT_PROXY_PORT));
-        } else {
-            try {
-                proxyPort = Integer.parseInt(proxyPortString);
-            } catch (NumberFormatException e) {
-                LOGGER.warn(String.format("Значение порта прокси-сервера (%s) некорректно! Установлено значение по умолчанию: %d",
-                        proxyPortString, DEFAULT_PROXY_PORT), e);
-                proxyPort = DEFAULT_PROXY_PORT;
-            }
-        }
+        String threadsCountString = getSettingByKey(THREADS_COUNT, String.valueOf(DEFAULT_THREADS_COUNT));
+        threadsCount = Integer.parseInt(threadsCountString);
+        String proxyPortString = getSettingByKey(PROXY_PORT, String.valueOf(DEFAULT_PROXY_PORT));
+        proxyPort = Integer.parseInt(proxyPortString);
     }
 
     public synchronized void start() {
@@ -83,6 +59,7 @@ public class Proxy {
         } else {
             start();
         }
+        LOGGER.info("Прокси-сервер перезагружен!");
     }
 
     public boolean isRunning() {

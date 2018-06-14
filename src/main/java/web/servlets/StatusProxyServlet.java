@@ -23,6 +23,7 @@ public class StatusProxyServlet extends HttpServlet {
             response.getWriter().flush();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 

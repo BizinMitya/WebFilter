@@ -7,14 +7,13 @@ function checkProxyServer() {
     $.ajax({
         url: "/proxy/status",
         cache: false,
-        async: false,
         success: function (status) {
-            if (status === "true") {
-                $("#switchProxyServer").attr('checked', "true");
-            } else {
-                $("#switchProxyServer").removeAttr('checked');
-            }
+            $("#switchProxyServer").prop('checked', status === "true");
             $("#switchProxyServerLabel").html(status === "true" ? "Прокси-сервер включен" : "Прокси-сервер выключен");
+        },
+        error: function () {
+            $("#switchProxyServer").prop('checked', false);
+            $("#switchProxyServerLabel").html("Прокси-сервер выключен");
         }
     });
 }

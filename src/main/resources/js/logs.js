@@ -20,7 +20,7 @@ function getCurrentLogs() {
 function prepareLogs(logs) {
     return logs
         .replace(/(?:\r\n|\r|\n)/g, "<br>")
-        .replace(/INFO/ig, "<code class='text-info'>INFO</code>")
-        .replace(/WARN/ig, "<code class='text-warning'>WARN</code>")
-        .replace(/ERROR/ig, "<code class='text-danger'>ERROR</code>");
+        .replace(/\[INFO]/ig, "<code class='text-info'>[INFO]</code>")
+        .replace(/\[WARN]/ig, "<code class='text-warning'>[WARN]</code>")
+        .replace(/\[ERROR]/ig, "<code class='text-danger'>[ERROR]</code>");
 }

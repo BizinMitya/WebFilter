@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public abstract class LogUtil {
 
     private static final Logger LOGGER = Logger.getLogger(LogUtil.class);
@@ -15,10 +17,9 @@ public abstract class LogUtil {
     private static final String NAME_LOG_FILE = "server";
     private static final String LOG_EXTENSION = ".log";
 
-
     public static String getCurrentLog() {
         try {
-            return new String(Files.readAllBytes(Paths.get(PATH_TO_LOG_DIR + NAME_LOG_FILE + LOG_EXTENSION)));
+            return new String(Files.readAllBytes(Paths.get(PATH_TO_LOG_DIR + NAME_LOG_FILE + LOG_EXTENSION)), UTF_8);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -29,7 +30,7 @@ public abstract class LogUtil {
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(".yyyy-MM-dd");
             String dateString = simpleDateFormat.format(date);
-            return new String(Files.readAllBytes(Paths.get(PATH_TO_LOG_DIR + NAME_LOG_FILE + dateString + LOG_EXTENSION)));
+            return new String(Files.readAllBytes(Paths.get(PATH_TO_LOG_DIR + NAME_LOG_FILE + dateString + LOG_EXTENSION)), UTF_8);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }

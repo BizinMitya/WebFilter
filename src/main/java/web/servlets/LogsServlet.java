@@ -27,6 +27,7 @@ public class LogsServlet extends HttpServlet {
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 

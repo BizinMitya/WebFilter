@@ -11,10 +11,6 @@ $(document).ready(function () {
     loadSettings();
 });
 
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip();//инициализация тултипов
-});
-
 function loadSettings() {
     $.ajax({
         url: "/proxy/settings",
