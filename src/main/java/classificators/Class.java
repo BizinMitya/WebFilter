@@ -2,8 +2,11 @@ package classificators;
 
 public enum Class {
 
+    ADVERTISING,
+    DRUGS,
     GAMES,
-    WEAPONS,
-    OTHER
+    OTHER,
+    VIOLENCE,
+    WEAPON
 
 }
