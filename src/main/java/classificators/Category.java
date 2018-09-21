@@ -1,11 +1,10 @@
 package classificators;
 
-public enum Class {
+public enum Category {
 
     ADVERTISING,
     DRUGS,
     GAMES,
-    OTHER,
     VIOLENCE,
     WEAPON
 
