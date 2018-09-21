@@ -2,10 +2,10 @@ package classificators;
 
 public enum Category {
 
-    ADVERTISING,
-    DRUGS,
-    GAMES,
-    VIOLENCE,
-    WEAPON
+    ADVERTISING,// реклама
+    DRUGS,// наркотики
+    GAMES,// игры
+    VIOLENCE,// насилие
+    WEAPON// оружие
 
 }
