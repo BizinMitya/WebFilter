@@ -1,6 +1,5 @@
 import classificators.Category;
 import classificators.bayes.BayesClassifier;
-import edu.stanford.nlp.coref.statistical.Example;
 import util.FileUtil;
 
 import java.util.ArrayList;
