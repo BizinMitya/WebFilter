@@ -66,11 +66,19 @@
             <version>1.7.25</version>
         </dependency>
         <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
-            <version>3.9.1</version>
+            <groupId>org.apache.lucene.morphology</groupId>
+            <artifactId>russian</artifactId>
+            <version>RELEASE</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>russian-morphology.lucene.apache.org</id>
+            <name>Lucene Russian Morphology Repository for Maven</name>
+            <url>http://russianmorphology.googlecode.com/svn/repo/releases/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -84,11 +92,13 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>proxyHandler.Main</mainClass>
+                            <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -97,6 +107,15 @@
                     <finalName>WebFilter-1.0-SNAPSHOT</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,12 +1,20 @@
 package proxy.model;
 
+import classificators.Category;
+import classificators.bayes.BayesClassifier;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -43,7 +51,7 @@ public class HttpResponse {
     }
 
     public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {
-        if (TEXT_HTML.getMimeType().equals(mimeType) ||
+        if (isHtml() ||
                 TEXT_XML.getMimeType().equals(mimeType) ||
                 TEXT_PLAIN.getMimeType().equals(mimeType) ||
                 APPLICATION_JSON.getMimeType().equals(mimeType) ||
@@ -52,6 +60,34 @@ public class HttpResponse {
             bodyString = bodyString.replace(target, replacement);
             this.body = bodyString.getBytes(bodyEncoding);
         }
+    }
+
+    public boolean isHtml() {
+        return TEXT_HTML.getMimeType().equals(mimeType);
+    }
+
+    public Map<Category, Double> classifyContent() throws UnsupportedEncodingException {
+        String bodyString = new String(body, bodyEncoding);
+        Pattern pattern = Pattern.compile("[а-яА-Я]+");
+        Matcher matcher = pattern.matcher(Jsoup.parse(bodyString).text());
+        List<String> words = new ArrayList<>();
+        while (matcher.find()) {
+            words.add(matcher.group());
+        }
+        return BayesClassifier.classify(words);
+    }
+
+    public void createCategoriesInfoScript(Map<Category, Double> categoryProbabilityMap) throws UnsupportedEncodingException {
+        String bodyString = new String(body, bodyEncoding);
+        StringBuffer infoScript = new StringBuffer();
+        infoScript.append("<script>").append("alert('");
+        for (Map.Entry<Category, Double> entry : categoryProbabilityMap.entrySet()) {
+            infoScript.append(entry.getKey()).append(": ").append(String.format("%.4f", entry.getValue())).append("; ");
+        }
+        infoScript.append("')").append("</script>");
+        Document html = Jsoup.parse(bodyString);
+        html.head().append(infoScript.toString());
+        this.body = html.toString().getBytes(bodyEncoding);
     }
 
     public String getBodyEncoding() {

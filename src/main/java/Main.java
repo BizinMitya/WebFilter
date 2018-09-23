@@ -4,8 +4,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.util.resource.Resource;
-import web.servlets.*;
+import servlets.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -27,8 +26,8 @@ public class Main {
 
             ResourceHandler resourceHandler = new ResourceHandler();
             resourceHandler.setDirectoriesListed(true);
-            resourceHandler.setWelcomeFiles(new String[]{"html/index.html"});
-            resourceHandler.setBaseResource(Resource.newResource(Main.class.getResource("/")));
+            resourceHandler.setWelcomeFiles(new String[]{"/html/index.html"});
+            resourceHandler.setResourceBase(Main.class.getResource("/web").toExternalForm());
 
             HandlerList handlers = new HandlerList();
             handlers.setHandlers(new Handler[]{resourceHandler, servletHandler});
@@ -48,8 +47,7 @@ public class Main {
         servletHandler.addServletWithMapping(StatusProxyServlet.class, "/proxy/status");
         servletHandler.addServletWithMapping(SettingsProxyServlet.class, "/proxy/settings");
         servletHandler.addServletWithMapping(BlacklistProxyServlet.class, "/proxy/blacklist");
-        servletHandler.addServletWithMapping(LogsServlet.class, "/logs");
-        servletHandler.addServletWithMapping(LogsServlet.class, "/proxy/monitoring");
+        servletHandler.addServletWithMapping(MonitoringServlet.class, "/proxy/monitoring");
     }
 
     private static void openInBrowser(String url) {

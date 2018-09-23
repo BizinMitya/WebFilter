@@ -1,5 +1,6 @@
 package proxy;
 
+import classificators.bayes.BayesClassifier;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class Proxy {
     public synchronized void start() {
         try {
             setSettings();
+            BayesClassifier.learn();
             serverSocket = new ServerSocket(proxyPort);
             new ProxyThread(serverSocket, threadsCount).start();
             LOGGER.info("Прокси-сервер запущен на порту " + proxyPort);
