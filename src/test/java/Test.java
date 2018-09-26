@@ -1,11 +1,14 @@
 import classificators.Category;
 import classificators.bayes.BayesClassifier;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Test {
+
+    private static final Logger LOGGER = Logger.getLogger(Test.class);
 
     public static void main(String[] args) {
         BayesClassifier.learn();
@@ -18,7 +21,7 @@ public class Test {
         keywords.add("пока");
         Map<Category, Double> map = BayesClassifier.classify(keywords);
         for (Map.Entry<Category, Double> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue());
+            LOGGER.info(entry.getKey() + " -> " + entry.getValue());
         }
 
     }
