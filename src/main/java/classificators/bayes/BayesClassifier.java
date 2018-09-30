@@ -11,9 +11,6 @@ import static classificators.Category.*;
 
 public abstract class BayesClassifier {
 
-    //https://logic.pdmi.ras.ru/~sergey/teaching/mlaptu11/03-classifiers.pdf
-    //https://moit.vivt.ru/wp-content/uploads/2018/01/ShanovSoavtori_1_1_18.pdf
-
     private static final Logger LOGGER = Logger.getLogger(BayesClassifier.class);
 
     private static final Category[] CATEGORIES = {
