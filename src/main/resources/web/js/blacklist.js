@@ -13,9 +13,10 @@ function loadAllHosts() {
             for (let i = 0; i < blacklist.length; i++) {
                 list.append('<tr id=' + (i + 1) + '>' +
                     '<th scope="row">' + (i + 1) + '</th>' +
-                    '<td>' + blacklist[i] + '</td>' +
+                    '<td>' + blacklist[i].ip + '</td>' +
+                    '<td>' + blacklist[i].hostname + '</td>' +
                     '<td>' +
-                    '<button type="button" class="close" aria-label="Close" onclick="removeHost(this.id,' + (i + 1) + ')" id="' + blacklist[i] + '">' +
+                    '<button type="button" class="close" aria-label="Close" onclick="removeHost(this.id,' + (i + 1) + ')" id="' + blacklist[i].ip + '">' +
                     '<span aria-hidden="true">&times;</span>' +
                     '</button>' +
                     '</td>' +
@@ -28,34 +29,20 @@ function loadAllHosts() {
     });
 }
 
-function addHostToTable(host) {
-    const table = $("#blacklist");
-    table.append('<tr id=' + table.length + '>' +
-        '<th scope="row">' + table.length + '</th>' +
-        '<td>' + host + '</td>' +
-        '<td>' +
-        '<button type="button" class="close" aria-label="Close" onclick="removeHost(this.id,' + table.length + ')" id="' + host + '">' +
-        '<span aria-hidden="true">&times;</span>' +
-        '</button>' +
-        '</td>' +
-        '</tr>');
-
-}
-
 function removeHostFromTable(id) {
     $("#" + id).remove();
 }
 
-function removeHost(host, rowNumber) {
-    removeHostFromTable(rowNumber);
+function removeHost(ip, rowNumber) {
     $.ajax({
         url: "/proxy/blacklist",
         method: "DELETE",
         contentType: "text/plain; charset=UTF-8",
         data: {
-            host: host
+            ip: ip
         },
         success: function () {
+            removeHostFromTable(rowNumber);
             removeSaveHostErrorAlert();
             addSaveHostSuccessAlert("Хост успешно удалён из чёрного списка!");
         },
@@ -78,7 +65,6 @@ function addHostToBlacklist() {
     const host = $("#hostNameInput").val();
     if (validIpAddressRegex.test(host) || validHostnameRegex.test(host)) {
         removeSaveHostWarningAlert();
-        addHostToTable(host);
         $("#hostNameInput").val("");
         $.ajax({
             url: "/proxy/blacklist",
@@ -90,6 +76,7 @@ function addHostToBlacklist() {
             success: function () {
                 removeSaveHostErrorAlert();
                 addSaveHostSuccessAlert("Хост успешно добавлен в чёрный список!");
+                loadAllHosts();
             },
             statusCode: {
                 400: function () {

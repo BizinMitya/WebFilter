@@ -2,6 +2,7 @@ package dao;
 
 import db.JDBC;
 import org.apache.log4j.Logger;
+import proxy.model.Host;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,47 +15,49 @@ public abstract class BlacklistDAO {
 
     private static final Logger LOGGER = Logger.getLogger(BlacklistDAO.class);
     private static final String GET_ALL_HOSTS_QUERY = "SELECT * FROM blacklist";
-    private static final String INSERT_HOST_QUERY = "INSERT INTO blacklist (host) VALUES (?)";
-    private static final String DELETE_HOST_QUERY = "DELETE FROM blacklist WHERE host = ?";
-    private static final String GET_HOST_QUERY = "SELECT host FROM blacklist WHERE host = ?";
+    private static final String INSERT_HOST_QUERY = "INSERT INTO blacklist (ip, host) VALUES (?, ?)";
+    private static final String DELETE_HOST_QUERY = "DELETE FROM blacklist WHERE ip = ?";
+    private static final String GET_HOST_QUERY = "SELECT ip, host FROM blacklist WHERE ip = ?";
 
-    public static List<String> getAllHosts() {
-        List<String> allHosts = new ArrayList<>();
+    public static List<Host> getAllHosts() {
+        List<Host> results = new ArrayList<>();
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_HOSTS_QUERY)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
+                    String ip = resultSet.getString("ip");
                     String host = resultSet.getString("host");
-                    allHosts.add(host);
+                    results.add(new Host(ip, host));
                 }
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return allHosts;
+        return results;
     }
 
-    public static void addHost(String host) throws SQLException {
+    public static void addHostInBlacklist(Host host) throws SQLException {
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_HOST_QUERY)) {
-            preparedStatement.setString(1, host);
+            preparedStatement.setString(1, host.getIp());
+            preparedStatement.setString(2, host.getHostname());
             preparedStatement.execute();
         }
     }
 
-    public static void removeHost(String host) throws SQLException {
+    public static void removeHost(Host host) throws SQLException {
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_HOST_QUERY)) {
-            preparedStatement.setString(1, host);
+            preparedStatement.setString(1, host.getIp());
             preparedStatement.executeUpdate();
         }
     }
 
-    public static boolean isHostInBlacklist(String host) {
+    public static boolean isHostInBlacklist(Host host) {
         boolean hostInBlacklist = false;
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_HOST_QUERY)) {
-            preparedStatement.setString(1, host);
+            preparedStatement.setString(1, host.getIp());
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 hostInBlacklist = resultSet.next();
             }
