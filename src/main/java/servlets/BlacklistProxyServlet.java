@@ -46,8 +46,11 @@ public class BlacklistProxyServlet extends HttpServlet {
                 Host host = HostUtil.createHostFromHostOrIp(hostOrIp);
                 addHostInBlacklist(host);
                 LOGGER.info(String.format("Хост %s добавлен в чёрный список!", hostOrIp));
-                if (proxy.isRunning()) {
-                    proxy.restart();
+                if (proxy.isRunningHttp()) {
+                    proxy.restartHttp();
+                }
+                if (proxy.isRunningHttps()) {
+                    proxy.restartHttps();
                 }
             }
         } catch (UnknownHostException e) {
@@ -69,8 +72,11 @@ public class BlacklistProxyServlet extends HttpServlet {
                 Host host = HostUtil.createHostFromHostOrIp(ip);
                 removeHost(host);
                 LOGGER.info(String.format("Хост %s удалён из чёрного списка!", ip));
-                if (proxy.isRunning()) {
-                    proxy.restart();
+                if (proxy.isRunningHttp()) {
+                    proxy.restartHttp();
+                }
+                if (proxy.isRunningHttps()) {
+                    proxy.restartHttps();
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

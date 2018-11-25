@@ -1,0 +1,5 @@
+Сгенерировать приватный ключ для корневого сертификата:
+openssl genrsa 2048 | openssl pkcs8 -topk8 -nocrypt -out root.pem
+
+Сгенерировать самоподписанный корневой сертификат:
+openssl req -x509 -new -key root.pem -days 10000 -out root.crt

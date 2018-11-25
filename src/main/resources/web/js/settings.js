@@ -45,20 +45,24 @@ function saveSettings() {
 }
 
 function getJSONSettings() {
-    const proxyPort = $("#proxyPortInput").val();
+    const httpProxyPort = $("#httpProxyPortInput").val();
+    const httpsProxyPort = $("#httpsProxyPortInput").val();
     const threadsCount = $("#threadsCountInput").val();
     const timeoutForClient = $("#timeoutForClientInput").val();
     const timeoutForServer = $("#timeoutForServerInput").val();
-    if (!$.isNumeric(proxyPort) || !$.isNumeric(threadsCount) ||
+    if (!$.isNumeric(httpProxyPort) || !$.isNumeric(httpsProxyPort) || !$.isNumeric(threadsCount) ||
         !$.isNumeric(timeoutForClient) || !$.isNumeric(timeoutForServer) ||
-        proxyPort < MIN_PROXY_PORT || proxyPort > MAX_PROXY_PORT ||
+        httpProxyPort < MIN_PROXY_PORT || httpProxyPort > MAX_PROXY_PORT ||
+        httpsProxyPort < MIN_PROXY_PORT || httpsProxyPort > MAX_PROXY_PORT ||
         threadsCount < MIN_THREADS_COUNT || threadsCount > MAX_THREADS_COUNT ||
         timeoutForClient < MIN_TIMEOUT_FOR_CLIENT || timeoutForClient > MAX_TIMEOUT_FOR_CLIENT ||
-        timeoutForServer < MIN_TIMEOUT_FOR_SERVER || timeoutForServer > MAX_TIMEOUT_FOR_SERVER) {
+        timeoutForServer < MIN_TIMEOUT_FOR_SERVER || timeoutForServer > MAX_TIMEOUT_FOR_SERVER ||
+        httpProxyPort === httpsProxyPort) {
         addSaveSettingsWarningAlert();
     }
     return JSON.stringify({
-        proxyPort: proxyPort,
+        httpProxyPort: httpProxyPort,
+        httpsProxyPort: httpsProxyPort,
         threadsCount: threadsCount,
         timeoutForClient: timeoutForClient,
         timeoutForServer: timeoutForServer
@@ -66,7 +70,8 @@ function getJSONSettings() {
 }
 
 function setSettings(settings) {
-    $("#proxyPortInput").val(settings.proxyPort);
+    $("#httpProxyPortInput").val(settings.httpProxyPort);
+    $("#httpsProxyPortInput").val(settings.httpsProxyPort);
     $("#threadsCountInput").val(settings.threadsCount);
     $("#timeoutForClientInput").val(settings.timeoutForClient);
     $("#timeoutForServerInput").val(settings.timeoutForServer);

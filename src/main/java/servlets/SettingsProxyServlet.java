@@ -36,8 +36,11 @@ public class SettingsProxyServlet extends HttpServlet {
             request.setCharacterEncoding(UTF_8.toString());
             JSONObject settingsJson = new JSONObject(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
             saveSettingsWithValidation(settingsJson);
-            if (proxy.isRunning()) {
-                proxy.restart();
+            if (proxy.isRunningHttp()) {
+                proxy.restartHttp();
+            }
+            if (proxy.isRunningHttps()) {
+                proxy.restartHttps();
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
@@ -46,9 +49,16 @@ public class SettingsProxyServlet extends HttpServlet {
     }
 
     private void saveSettingsWithValidation(JSONObject settingsJson) {
-        int proxyPort = settingsJson.has(PROXY_PORT) ?
-                settingsJson.optInt(PROXY_PORT, DEFAULT_PROXY_PORT) :
-                DEFAULT_PROXY_PORT;
+        int httpProxyPort = settingsJson.has(HTTP_PROXY_PORT) ?
+                settingsJson.optInt(HTTP_PROXY_PORT, DEFAULT_HTTP_PROXY_PORT) :
+                DEFAULT_HTTP_PROXY_PORT;
+        int httpsProxyPort = settingsJson.has(HTTPS_PROXY_PORT) ?
+                settingsJson.optInt(HTTPS_PROXY_PORT, DEFAULT_HTTPS_PROXY_PORT) :
+                DEFAULT_HTTPS_PROXY_PORT;
+        if (httpProxyPort == httpsProxyPort) {
+            httpProxyPort = DEFAULT_HTTP_PROXY_PORT;
+            httpsProxyPort = DEFAULT_HTTPS_PROXY_PORT;
+        }
         int threadsCount = settingsJson.has(THREADS_COUNT) ?
                 settingsJson.optInt(THREADS_COUNT, DEFAULT_THREADS_COUNT) :
                 DEFAULT_THREADS_COUNT;
@@ -58,8 +68,11 @@ public class SettingsProxyServlet extends HttpServlet {
         int timeoutForServer = settingsJson.has(TIMEOUT_FOR_SERVER) ?
                 settingsJson.optInt(TIMEOUT_FOR_SERVER, DEFAULT_TIMEOUT_FOR_SERVER) :
                 DEFAULT_TIMEOUT_FOR_SERVER;
-        if (proxyPort < MIN_PROXY_PORT || proxyPort > MAX_PROXY_PORT) {
-            proxyPort = DEFAULT_PROXY_PORT;
+        if (httpProxyPort < MIN_PROXY_PORT || httpProxyPort > MAX_PROXY_PORT) {
+            httpProxyPort = DEFAULT_HTTP_PROXY_PORT;
+        }
+        if (httpsProxyPort < MIN_PROXY_PORT || httpsProxyPort > MAX_PROXY_PORT) {
+            httpsProxyPort = DEFAULT_HTTPS_PROXY_PORT;
         }
         if (threadsCount < MIN_THREADS_COUNT || threadsCount > MAX_THREADS_COUNT) {
             threadsCount = DEFAULT_THREADS_COUNT;
@@ -71,7 +84,8 @@ public class SettingsProxyServlet extends HttpServlet {
             timeoutForServer = DEFAULT_TIMEOUT_FOR_SERVER;
         }
         Map<String, String> allSettings = new HashMap<>();
-        allSettings.put(PROXY_PORT, String.valueOf(proxyPort));
+        allSettings.put(HTTP_PROXY_PORT, String.valueOf(httpProxyPort));
+        allSettings.put(HTTPS_PROXY_PORT, String.valueOf(httpsProxyPort));
         allSettings.put(THREADS_COUNT, String.valueOf(threadsCount));
         allSettings.put(TIMEOUT_FOR_CLIENT, String.valueOf(timeoutForClient));
         allSettings.put(TIMEOUT_FOR_SERVER, String.valueOf(timeoutForServer));

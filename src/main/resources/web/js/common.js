@@ -12,16 +12,25 @@ function checkStatus() {
         url: "/proxy/status",
         cache: false,
         success: function (status) {
-            if (status === "true") {
-                $("#status").removeClass("text-danger").addClass("text-success").html("Прокси-сервер включен");
+            status = JSON.parse(status);
+            let httpStatus = status[0];
+            let httpsStatus = status[1];
+            if (httpStatus === true) {
+                $("#httpStatus").removeClass("text-danger").addClass("text-success").html("HTTP");
             } else {
-                $("#status").removeClass("text-success").addClass("text-danger").html("Прокси-сервер выключен");
+                $("#httpStatus").removeClass("text-success").addClass("text-danger").html("HTTP");
+            }
+            if (httpsStatus === true) {
+                $("#httpsStatus").removeClass("text-danger").addClass("text-success").html("HTTPS");
+            } else {
+                $("#httpsStatus").removeClass("text-success").addClass("text-danger").html("HTTPS");
             }
             removeReadFromServerErrorAlert();
         },
         error: function () {
             addReadFromServerErrorAlert();
-            $("#status").removeClass("text-success").addClass("text-danger").html("Прокси-сервер выключен");
+            $("#httpStatus").removeClass("text-success").addClass("text-danger").html("HTTP");
+            $("#httpsStatus").removeClass("text-success").addClass("text-danger").html("HTTPS");
         }
     });
 }

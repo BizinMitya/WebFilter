@@ -1,6 +1,7 @@
-package proxy;
+package proxy.http;
 
 import org.apache.log4j.Logger;
+import proxy.ProxyHandler;
 import proxy.model.HttpRequest;
 import proxy.model.HttpResponse;
 
@@ -13,16 +14,16 @@ import static dao.SettingsDAO.*;
 import static proxy.model.HttpRequest.readHttpRequest;
 
 /**
- * Поток для клиента прокси-сервера
+ * Поток для клиента HTTP прокси-сервера
  */
-public class ClientProxyThread implements Runnable {
+public class HttpClientProxyThread implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(ClientProxyThread.class);
+    private static final Logger LOGGER = Logger.getLogger(HttpClientProxyThread.class);
     private int timeoutForClient;//таймаут на чтение данных от клиента (браузера)
 
     private Socket socket;
 
-    public ClientProxyThread(Socket socket) throws SocketException {
+    public HttpClientProxyThread(Socket socket) throws SocketException {
         setSettings();
         socket.setSoTimeout(timeoutForClient);
         this.socket = socket;

@@ -37,7 +37,13 @@
                 <a class="nav-link" href="blacklist.html">Чёрный список</a>
             </li>
             <li class="nav-item">
-                <div class="navbar-text" id="status"></div>
+                <div class="navbar-text" id="httpStatus"></div>
+            </li>
+            <li class="nav-item">
+                <div class="navbar-text text-white">&nbsp;|&nbsp;</div>
+            </li>
+            <li class="nav-item">
+                <div class="navbar-text" id="httpsStatus"></div>
             </li>
         </ul>
     </div>
@@ -51,8 +57,16 @@
 <div class="container mt-5">
     <div class="form-group row">
          <span class="switch switch-sm">
-            <input type="checkbox" class="switch" id="switchProxyServer" onchange="switchProxyServer()">
-            <label for="switchProxyServer" id="switchProxyServerLabel"></label>
+            <input class="switch" id="switchHttpProxyServer" onchange="switchHttpProxyServer()" type="checkbox">
+            <label for="switchHttpProxyServer" id="switchHttpProxyServerLabel"></label>
+        </span>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="form-group row">
+         <span class="switch switch-sm">
+            <input class="switch" id="switchHttpsProxyServer" onchange="switchHttpsProxyServer()" type="checkbox">
+            <label for="switchHttpsProxyServer" id="switchHttpsProxyServerLabel"></label>
         </span>
     </div>
 </div>

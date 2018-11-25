@@ -21,7 +21,7 @@ public abstract class JDBC {
 
     static {
         jdbcDataSource = new JdbcDataSource();
-        jdbcDataSource.setURL("jdbc:h2:./db/webfilter;TRACE_LEVEL_FILE=4");
+        jdbcDataSource.setURL(/*"jdbc:h2:./db/webfilter;TRACE_LEVEL_FILE=4"*/"jdbc:h2:./db/webfilter");
         initializeTables();
         SettingsDAO.addDefaultData();
     }

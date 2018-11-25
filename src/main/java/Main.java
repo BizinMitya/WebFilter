@@ -1,3 +1,4 @@
+import classificators.bayes.BayesClassifier;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -19,6 +20,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            BayesClassifier.learn();
+
             Server server = new Server(PORT);
 
             ServletHandler servletHandler = new ServletHandler();
@@ -42,8 +45,10 @@ public class Main {
     }
 
     private static void addServlets(ServletHandler servletHandler) {
-        servletHandler.addServletWithMapping(StartProxyServlet.class, "/proxy/start");
-        servletHandler.addServletWithMapping(StopProxyServlet.class, "/proxy/stop");
+        servletHandler.addServletWithMapping(StartHttpProxyServlet.class, "/proxy/startHttp");
+        servletHandler.addServletWithMapping(StopHttpProxyServlet.class, "/proxy/stopHttp");
+        servletHandler.addServletWithMapping(StartHttpsProxyServlet.class, "/proxy/startHttps");
+        servletHandler.addServletWithMapping(StopHttpsProxyServlet.class, "/proxy/stopHttps");
         servletHandler.addServletWithMapping(StatusProxyServlet.class, "/proxy/status");
         servletHandler.addServletWithMapping(SettingsProxyServlet.class, "/proxy/settings");
         servletHandler.addServletWithMapping(BlacklistProxyServlet.class, "/proxy/blacklist");

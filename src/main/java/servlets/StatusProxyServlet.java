@@ -19,7 +19,7 @@ public class StatusProxyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             response.setCharacterEncoding(UTF_8.toString());
-            response.getWriter().write(Boolean.toString(proxy.isRunning()));
+            response.getWriter().write("[" + proxy.isRunningHttp() + ", " + proxy.isRunningHttps() + "]");
             response.getWriter().flush();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

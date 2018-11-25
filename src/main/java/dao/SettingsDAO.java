@@ -14,11 +14,13 @@ public abstract class SettingsDAO {
 
     public static final String TIMEOUT_FOR_SERVER = "timeoutForServer";
     public static final String TIMEOUT_FOR_CLIENT = "timeoutForClient";
-    public static final String PROXY_PORT = "proxyPort";
+    public static final String HTTP_PROXY_PORT = "httpProxyPort";
+    public static final String HTTPS_PROXY_PORT = "httpsProxyPort";
     public static final String THREADS_COUNT = "threadsCount";
     public static final int DEFAULT_TIMEOUT_FOR_SERVER = 10_000;
     public static final int DEFAULT_TIMEOUT_FOR_CLIENT = 10_000;
-    public static final int DEFAULT_PROXY_PORT = 3333;
+    public static final int DEFAULT_HTTP_PROXY_PORT = 3333;
+    public static final int DEFAULT_HTTPS_PROXY_PORT = 3334;
     public static final int DEFAULT_THREADS_COUNT = 5;
     public static final int MIN_PROXY_PORT = 1024;
     public static final int MIN_THREADS_COUNT = 1;
@@ -71,8 +73,11 @@ public abstract class SettingsDAO {
     }
 
     public static void addDefaultData() {
-        if (!hasKey(PROXY_PORT)) {
-            addSetting(PROXY_PORT, String.valueOf(DEFAULT_PROXY_PORT));
+        if (!hasKey(HTTP_PROXY_PORT)) {
+            addSetting(HTTP_PROXY_PORT, String.valueOf(DEFAULT_HTTP_PROXY_PORT));
+        }
+        if (!hasKey(HTTPS_PROXY_PORT)) {
+            addSetting(HTTPS_PROXY_PORT, String.valueOf(DEFAULT_HTTPS_PROXY_PORT));
         }
         if (!hasKey(THREADS_COUNT)) {
             addSetting(THREADS_COUNT, String.valueOf(DEFAULT_THREADS_COUNT));

@@ -86,7 +86,11 @@ public class HttpRequest {
         if (idx == -1) {
             LOGGER.error("Некорректный параметр заголовка: " + header);
         }
-        httpRequest.headers.put(header.substring(0, idx), header.substring(idx + 2, header.length()));
+        httpRequest.headers.put(header.substring(0, idx), header.substring(idx + 2));
+    }
+
+    public boolean isConnectMethod() {
+        return CONNECT.equals(method);
     }
 
     private void setSettings() {
@@ -112,7 +116,11 @@ public class HttpRequest {
 
     @Nullable
     public String getHost() {
-        return headers.getOrDefault("Host", null);
+        String host = headers.getOrDefault("Host", "");
+        if (host.indexOf(':') != -1) {
+            host = host.substring(0, host.indexOf(':'));
+        }
+        return host;
     }
 
     @Nullable
@@ -175,24 +183,29 @@ public class HttpRequest {
             if (request != null) {
                 request.setConfig(requestConfig);
                 addHeaders(request);
-                org.apache.http.HttpResponse response = client.execute(request);
-                httpResponse.setStatusCode(response.getStatusLine().getStatusCode());
-                httpResponse.setReasonPhrase(response.getStatusLine().getReasonPhrase());
-                httpResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
-                httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
-                if (response.getEntity() != null) {
-                    byte[] body = IOUtils.toByteArray(response.getEntity().getContent());
-                    httpResponse.setBody(body);
-                    Header contentTypeHeader = response.getEntity().getContentType();
-                    if (contentTypeHeader != null) {
-                        String contentType = contentTypeHeader.getValue();
-                        httpResponse.setMimeType(getMimeTypeFromContentType(contentType));
-                        httpResponse.setBodyEncoding(getEncoding(body, contentType));
-                    }
-                    if (httpResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
-                        httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+                try (CloseableHttpResponse response = client.execute(request)) {
+                    httpResponse.setStatusCode(response.getStatusLine().getStatusCode());
+                    httpResponse.setReasonPhrase(response.getStatusLine().getReasonPhrase());
+                    httpResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
+                    httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
+                    if (response.getEntity() != null) {
+                        byte[] body = IOUtils.toByteArray(response.getEntity().getContent());
+                        httpResponse.setBody(body);
+                        Header contentTypeHeader = response.getEntity().getContentType();
+                        if (contentTypeHeader != null) {
+                            String contentType = contentTypeHeader.getValue();
+                            httpResponse.setMimeType(getMimeTypeFromContentType(contentType));
+                            httpResponse.setBodyEncoding(getEncoding(body, contentType));
+                        }
+                        if (httpResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
+                            httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+                        }
                     }
                 }
+            } else {// connect method
+                httpResponse.setStatusCode(200);
+                httpResponse.setReasonPhrase("OK");
+                httpResponse.setVersion("HTTP/1.1");
             }
         }
         return httpResponse;

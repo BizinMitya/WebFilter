@@ -2,5 +2,5 @@
 target/
 out/
 logs/
-db/*.mv.db
+db/webfilter.mv.db
 
