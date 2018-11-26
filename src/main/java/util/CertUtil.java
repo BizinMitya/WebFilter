@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public abstract class CertUtil {
 
@@ -28,7 +29,13 @@ public abstract class CertUtil {
         return (X509Certificate) certificateFactory.generateCertificate(CertUtil.class.getResourceAsStream("/cert/" + fileName));
     }
 
-    private static PrivateKey getPrivateKeyFromFile(String fileName) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    /**
+     * Метод чтения приватного ключа из файлов расширения PEM, и только из них!
+     *
+     * @param fileName имя PEM-файла с расширением
+     * @return приватный ключ из PEM-файла
+     */
+    private static PrivateKey getPrivateKeyFromPemFile(String fileName) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         try (PemReader pemReader = new PemReader(new InputStreamReader(CertUtil.class.getResourceAsStream("/cert/" + fileName)))) {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
             PemObject pemObject = pemReader.readPemObject();
@@ -39,10 +46,8 @@ public abstract class CertUtil {
     }
 
     public static FakeCertificate createFakeCertificate(String hostName) throws NoSuchProviderException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, CertificateException, IOException, InvalidKeySpecException {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
         X509Certificate rootCertificate = getCertificateFromFile("root.crt");
-        PrivateKey rootPrivateKey = getPrivateKeyFromFile("root.pem");
+        PrivateKey rootPrivateKey = getPrivateKeyFromPemFile("root.pem");
 
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
         keyPairGenerator.initialize(2048);
@@ -61,7 +66,7 @@ public abstract class CertUtil {
         x509V3CertificateGenerator.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
         x509V3CertificateGenerator.setIssuerDN(rootCertificate.getSubjectX500Principal());
         x509V3CertificateGenerator.setNotBefore(new Date());
-        x509V3CertificateGenerator.setNotAfter(new Date(System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1_000L));
+        x509V3CertificateGenerator.setNotAfter(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)));
         x509V3CertificateGenerator.setSubjectDN(x500Principal);
         x509V3CertificateGenerator.setPublicKey(pkcs10CertificationRequest.getPublicKey("BC"));
         x509V3CertificateGenerator.setSignatureAlgorithm("SHA256WithRSAEncryption");

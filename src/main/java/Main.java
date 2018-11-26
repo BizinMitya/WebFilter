@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.Security;
 
 public class Main {
 
@@ -20,6 +21,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
             BayesClassifier.learn();
 
             Server server = new Server(PORT);
