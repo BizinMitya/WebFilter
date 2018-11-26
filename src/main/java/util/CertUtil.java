@@ -1,56 +1,60 @@
 package util;
 
 import model.FakeCertificate;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure;
 import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
-import sun.security.rsa.RSAPrivateCrtKeyImpl;
-import sun.security.tools.keytool.CertAndKeyGen;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 
 public abstract class CertUtil {
 
-    private static X509Certificate getCertificateFromFile(String fileName) throws java.security.cert.CertificateException {
+    private static X509Certificate getCertificateFromFile(String fileName) throws CertificateException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) certificateFactory.generateCertificate(CertUtil.class.getResourceAsStream("/cert/" + fileName));
     }
 
-    private static PrivateKey getPrivateKeyFromFile(String fileName) throws IOException, InvalidKeyException {
-        byte[] privateKeyEncodedBytes = IOUtils.toByteArray(CertUtil.class.getResourceAsStream("/cert/" + fileName));
-        String privateKeyEncodedString = new String(privateKeyEncodedBytes);
-        privateKeyEncodedString = privateKeyEncodedString.replace("-----BEGIN PRIVATE KEY-----" + System.lineSeparator(), "");
-        privateKeyEncodedString = privateKeyEncodedString.replace("-----END PRIVATE KEY-----", "");
-        Base64 base64 = new Base64();
-        return RSAPrivateCrtKeyImpl.newKey(base64.decode(privateKeyEncodedString));
+    private static PrivateKey getPrivateKeyFromFile(String fileName) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+        try (PemReader pemReader = new PemReader(new InputStreamReader(CertUtil.class.getResourceAsStream("/cert/" + fileName)))) {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
+            PemObject pemObject = pemReader.readPemObject();
+            byte[] content = pemObject.getContent();
+            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(content);
+            return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+        }
     }
 
-    public static FakeCertificate createFakeCertificate(String hostName) throws CertificateException, IOException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
+    public static FakeCertificate createFakeCertificate(String hostName) throws NoSuchProviderException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, CertificateException, IOException, InvalidKeySpecException {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         X509Certificate rootCertificate = getCertificateFromFile("root.crt");
         PrivateKey rootPrivateKey = getPrivateKeyFromFile("root.pem");
-        CertAndKeyGen certAndKeyGen = new CertAndKeyGen("RSA", "SHA256WithRSA", null);
-        certAndKeyGen.generate(2048);
+
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
+        keyPairGenerator.initialize(2048);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
         X500Principal x500Principal = new X500Principal("CN=" + hostName);
         PKCS10CertificationRequest pkcs10CertificationRequest = new PKCS10CertificationRequest(
                 "SHA256WithRSA",
                 x500Principal,
-                certAndKeyGen.getPublicKey(),
+                keyPair.getPublic(),
                 null,
-                certAndKeyGen.getPrivateKey());
+                keyPair.getPrivate());
 
         X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
 
@@ -73,7 +77,7 @@ public abstract class CertUtil {
         x509V3CertificateGenerator.addExtension(X509Extension.subjectAlternativeName, true, subjectAltNames);
 
         X509Certificate fakeCreatedCertificate = x509V3CertificateGenerator.generate(rootPrivateKey);
-        return new FakeCertificate(fakeCreatedCertificate, certAndKeyGen.getPrivateKey());
+        return new FakeCertificate(fakeCreatedCertificate, keyPair.getPrivate());
     }
 
 }

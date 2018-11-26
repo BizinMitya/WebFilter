@@ -17,8 +17,8 @@ public class Proxy {
     private int threadsCount;
     private int httpProxyPort;
     private int httpsProxyPort;
-    private ServerSocket serverSocket;
-    private ServerSocket sslServerSocket;
+    private ServerSocket httpServerSocket;
+    private ServerSocket httpsServerSocket;
 
     private Proxy() {
     }
@@ -29,23 +29,27 @@ public class Proxy {
 
     private void setSettings() {
         String threadsCountString = getSettingByKey(THREADS_COUNT, String.valueOf(DEFAULT_THREADS_COUNT));
-        threadsCount = Integer.parseInt(threadsCountString);
+        int threadsCount = Integer.parseInt(threadsCountString);
+        if (threadsCount != this.threadsCount) {
+            this.threadsCount = threadsCount;
+            ThreadService.update(threadsCount);
+        }
         String httpProxyPortString = getSettingByKey(HTTP_PROXY_PORT, String.valueOf(DEFAULT_HTTP_PROXY_PORT));
         httpProxyPort = Integer.parseInt(httpProxyPortString);
         String httpsProxyPortString = getSettingByKey(HTTPS_PROXY_PORT, String.valueOf(DEFAULT_HTTPS_PROXY_PORT));
         httpsProxyPort = Integer.parseInt(httpsProxyPortString);
     }
 
-    public synchronized void startHttp() {
+    public void startHttp() {
         try {
             setSettings();
-            serverSocket = new ServerSocket(httpProxyPort);
-            new HttpProxyThread(serverSocket, threadsCount).start();
+            httpServerSocket = new ServerSocket(httpProxyPort);
+            new HttpProxyThread(httpServerSocket).start();
             LOGGER.info("HTTP прокси-сервер запущен на порту " + httpProxyPort);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             try {
-                serverSocket.close();
+                httpServerSocket.close();
                 LOGGER.info("HTTP прокси-сервер завершил работу!");
             } catch (IOException t) {
                 LOGGER.error(t.getMessage(), t);
@@ -53,16 +57,16 @@ public class Proxy {
         }
     }
 
-    public synchronized void startHttps() {
+    public void startHttps() {
         try {
             setSettings();
-            sslServerSocket = new ServerSocket(httpsProxyPort);
-            new HttpsProxyThread(sslServerSocket, threadsCount).start();
+            httpsServerSocket = new ServerSocket(httpsProxyPort);
+            new HttpsProxyThread(httpsServerSocket).start();
             LOGGER.info("HTTPS прокси-сервер запущен на порту " + httpsProxyPort);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             try {
-                sslServerSocket.close();
+                httpsServerSocket.close();
                 LOGGER.info("HTTPS прокси-сервер завершил работу!");
             } catch (IOException t) {
                 LOGGER.error(t.getMessage(), t);
@@ -70,10 +74,10 @@ public class Proxy {
         }
     }
 
-    public synchronized void stopHttp() {
+    public void stopHttp() {
         try {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
+            if (httpServerSocket != null && !httpServerSocket.isClosed()) {
+                httpServerSocket.close();
                 LOGGER.info("HTTP прокси-сервер остановлен");
             }
         } catch (IOException e) {
@@ -81,10 +85,10 @@ public class Proxy {
         }
     }
 
-    public synchronized void stopHttps() {
+    public void stopHttps() {
         try {
-            if (sslServerSocket != null && !sslServerSocket.isClosed()) {
-                sslServerSocket.close();
+            if (httpsServerSocket != null && !httpsServerSocket.isClosed()) {
+                httpsServerSocket.close();
                 LOGGER.info("HTTPS прокси-сервер остановлен");
             }
         } catch (IOException e) {
@@ -92,7 +96,7 @@ public class Proxy {
         }
     }
 
-    public synchronized void restartHttp() {
+    public void restartHttp() {
         if (isRunningHttp()) {
             stopHttp();
             startHttp();
@@ -102,7 +106,7 @@ public class Proxy {
         LOGGER.info("HTTP прокси-сервер перезагружен!");
     }
 
-    public synchronized void restartHttps() {
+    public void restartHttps() {
         if (isRunningHttps()) {
             stopHttps();
             startHttps();
@@ -113,11 +117,11 @@ public class Proxy {
     }
 
     public boolean isRunningHttp() {
-        return serverSocket != null && !serverSocket.isClosed();
+        return httpServerSocket != null && !httpServerSocket.isClosed();
     }
 
     public boolean isRunningHttps() {
-        return sslServerSocket != null && !sslServerSocket.isClosed();
+        return httpsServerSocket != null && !httpsServerSocket.isClosed();
     }
 
 }

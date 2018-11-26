@@ -1,34 +1,31 @@
 package proxy.https;
 
 import org.apache.log4j.Logger;
+import proxy.ThreadService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
- * Поток на запуск HTTPS прокси-сервера
+ * Поток HTTPS прокси-сервера (обрабатывает входящие по HTTPS соединения)
  */
 public class HttpsProxyThread extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(HttpsProxyThread.class);
-    private ExecutorService executorService;
-    private ServerSocket sslServerSocket;
+    private ServerSocket httpsServerSocket;
 
-    public HttpsProxyThread(ServerSocket sslServerSocket, int threadsCount) {
-        this.executorService = Executors.newFixedThreadPool(threadsCount);
-        this.sslServerSocket = sslServerSocket;
+    public HttpsProxyThread(ServerSocket httpsServerSocket) {
+        this.httpsServerSocket = httpsServerSocket;
     }
 
     @Override
     public void run() {
         while (true) {
-            if (sslServerSocket == null || sslServerSocket.isClosed()) {
+            if (httpsServerSocket == null || httpsServerSocket.isClosed()) {
                 break;
             } else {
                 try {
-                    executorService.execute(new HttpsClientProxyThread(sslServerSocket.accept()));
+                    ThreadService.execute(new HttpsClientProxyThread(httpsServerSocket.accept()));
                 } catch (IOException e) {
                     LOGGER.error(e.getMessage(), e);
                 }

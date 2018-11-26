@@ -18,37 +18,32 @@ import static dao.SettingsDAO.*;
 public class HttpsClientProxyThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(HttpsClientProxyThread.class);
-    private int timeoutForClient;// таймаут на чтение данных от клиента (браузера)
 
-    private Socket sslSocket;
+    private Socket socket;
 
-    public HttpsClientProxyThread(Socket sslSocket) throws SocketException {
-        setSettings();
-        sslSocket.setSoTimeout(timeoutForClient);
-        this.sslSocket = sslSocket;
-    }
-
-    private void setSettings() {
+    public HttpsClientProxyThread(Socket socket) throws SocketException {
         String timeoutForClientString = getSettingByKey(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
-        timeoutForClient = Integer.parseInt(timeoutForClientString);
+        int timeoutForClient = Integer.parseInt(timeoutForClientString);
+        socket.setSoTimeout(timeoutForClient);
+        this.socket = socket;
     }
 
     @Override
     public void run() {
         try {
-            HttpRequest httpRequest = HttpRequest.readHttpRequest(sslSocket.getInputStream());
+            HttpRequest httpRequest = HttpRequest.readHttpRequest(socket.getInputStream());
             String host = httpRequest.getHost();
             if (httpRequest.isConnectMethod()) {
-                sendOkToConnect(sslSocket);
+                sendOkToConnect(socket);
                 TlsServerProtocol tlsServerProtocol = new TlsServerProtocol(
-                        sslSocket.getInputStream(), sslSocket.getOutputStream(), new SecureRandom());
+                        socket.getInputStream(), socket.getOutputStream(), new SecureRandom());
                 tlsServerProtocol.accept(new FakeTlsServer(host, tlsServerProtocol));
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
-                sslSocket.close();
+                socket.close();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }

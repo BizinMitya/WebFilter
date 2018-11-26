@@ -35,13 +35,14 @@ function saveSettings() {
         success: function () {
             removeSaveSettingsErrorAlert();
             addSaveSettingsSuccessAlert();
+            loadSettings();
         },
         error: function () {
             removeSaveSettingsSuccessAlert();
             addSaveSettingsErrorAlert();
+            loadSettings();
         }
     });
-    loadSettings();
 }
 
 function getJSONSettings() {

@@ -19,19 +19,14 @@ import static model.HttpRequest.readHttpRequest;
 public class HttpClientProxyThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(HttpClientProxyThread.class);
-    private int timeoutForClient;// таймаут на чтение данных от клиента (браузера)
 
     private Socket socket;
 
-    public HttpClientProxyThread(Socket socket) throws SocketException {
-        setSettings();
+    HttpClientProxyThread(Socket socket) throws SocketException {
+        String timeoutForClientString = getSettingByKey(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
+        int timeoutForClient = Integer.parseInt(timeoutForClientString);
         socket.setSoTimeout(timeoutForClient);
         this.socket = socket;
-    }
-
-    private void setSettings() {
-        String timeoutForClientString = getSettingByKey(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
-        timeoutForClient = Integer.parseInt(timeoutForClientString);
     }
 
     /**

@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class FakeTlsServer extends DefaultTlsServer {
             return new DefaultTlsSignerCredentials(context, bcCert,
                     PrivateKeyFactory.createKey(fakeCertificate.getPrivateKey().getEncoded()));
         } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException
-                | SignatureException | NoSuchProviderException e) {
+                | SignatureException | NoSuchProviderException | InvalidKeySpecException e) {
             LOGGER.error(e.getMessage(), e);
             throw new IOException(e);
         }
