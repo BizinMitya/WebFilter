@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.apache.lucene.morphology</groupId>
             <artifactId>russian</artifactId>
-            <version>RELEASE</version>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -86,7 +86,7 @@
         <repository>
             <id>russian-morphology.lucene.apache.org</id>
             <name>Lucene Russian Morphology Repository for Maven</name>
-            <url>http://russianmorphology.googlecode.com/svn/repo/releases/</url>
+            <url>https://dl.bintray.com/cuba-platform/main/</url>
         </repository>
     </repositories>
 

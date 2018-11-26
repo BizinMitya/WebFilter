@@ -3,7 +3,6 @@ package util;
 import model.FakeCertificate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
@@ -22,8 +21,6 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 public abstract class CertUtil {
-
-    private static final Logger LOGGER = Logger.getLogger(CertUtil.class);
 
     private static X509Certificate getCertificateFromFile(String fileName) throws java.security.cert.CertificateException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
