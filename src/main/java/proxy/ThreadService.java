@@ -11,7 +11,7 @@ import static dao.SettingsDAO.THREADS_COUNT;
 /**
  * Сервис, обеспечивающий общий пул потоков для HTTP и HTTPS прокси
  */
-public class ThreadService {
+public abstract class ThreadService {
 
     private static ExecutorService executorService;
 
@@ -27,7 +27,7 @@ public class ThreadService {
 
     public static void update(int threadsCount) {
         if (executorService != null) {
-            executorService.shutdownNow();
+            executorService.shutdown();
         }
         executorService = Executors.newFixedThreadPool(threadsCount);
     }
