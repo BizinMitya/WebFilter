@@ -1,4 +1,4 @@
-package proxy.model;
+package model;
 
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;

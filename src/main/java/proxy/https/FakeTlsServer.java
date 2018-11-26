@@ -1,10 +1,10 @@
 package proxy.https;
 
+import model.FakeCertificate;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.crypto.tls.*;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
-import proxy.model.FakeCertificate;
 import util.CertUtil;
 
 import java.io.IOException;

@@ -1,10 +1,10 @@
 package proxy;
 
 import classificators.Category;
+import model.Host;
+import model.HttpRequest;
+import model.HttpResponse;
 import org.apache.log4j.Logger;
-import proxy.model.Host;
-import proxy.model.HttpRequest;
-import proxy.model.HttpResponse;
 import util.HostUtil;
 
 import java.io.IOException;

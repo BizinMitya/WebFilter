@@ -1,4 +1,4 @@
-package proxy.model;
+package model;
 
 public class Host {
 

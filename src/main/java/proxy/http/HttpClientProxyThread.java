@@ -1,9 +1,9 @@
 package proxy.http;
 
+import model.HttpRequest;
+import model.HttpResponse;
 import org.apache.log4j.Logger;
 import proxy.ProxyHandler;
-import proxy.model.HttpRequest;
-import proxy.model.HttpResponse;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -11,7 +11,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import static dao.SettingsDAO.*;
-import static proxy.model.HttpRequest.readHttpRequest;
+import static model.HttpRequest.readHttpRequest;
 
 /**
  * Поток для клиента HTTP прокси-сервера
@@ -19,7 +19,7 @@ import static proxy.model.HttpRequest.readHttpRequest;
 public class HttpClientProxyThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(HttpClientProxyThread.class);
-    private int timeoutForClient;//таймаут на чтение данных от клиента (браузера)
+    private int timeoutForClient;// таймаут на чтение данных от клиента (браузера)
 
     private Socket socket;
 
@@ -44,10 +44,10 @@ public class HttpClientProxyThread implements Runnable {
     public void run() {
         try {
             ProxyHandler proxyHandler = new ProxyHandler();
-            HttpRequest httpRequestFromClient = readHttpRequest(socket.getInputStream());//парсинг http-запроса от браузера
-            HttpResponse httpResponseFromServer = proxyHandler.toServer(httpRequestFromClient);//отправка запроса на сервер (предварительная обработка) и получение ответа от него
-            HttpResponse httpResponseToClient = proxyHandler.fromServer(httpResponseFromServer);//обработка ответа от сервера
-            socket.getOutputStream().write(httpResponseToClient.getAllResponseInBytes());//отправка запроса обратно браузеру
+            HttpRequest httpRequestFromClient = readHttpRequest(socket.getInputStream());// парсинг http-запроса от браузера
+            HttpResponse httpResponseFromServer = proxyHandler.toServer(httpRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
+            HttpResponse httpResponseToClient = proxyHandler.fromServer(httpResponseFromServer);// обработка ответа от сервера
+            socket.getOutputStream().write(httpResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
             socket.getOutputStream().flush();
         } catch (IOException e) {
             if (!(e instanceof SocketException) && !(e instanceof SocketTimeoutException)) {

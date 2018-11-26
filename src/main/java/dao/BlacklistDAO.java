@@ -1,8 +1,8 @@
 package dao;
 
 import db.JDBC;
+import model.Host;
 import org.apache.log4j.Logger;
-import proxy.model.Host;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,4 +1,4 @@
-package proxy.model;
+package model;
 
 import classificators.Category;
 import classificators.bayes.BayesClassifier;

@@ -1,9 +1,9 @@
 package servlets;
 
+import model.Host;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import proxy.Proxy;
-import proxy.model.Host;
 import util.HostUtil;
 
 import javax.servlet.http.HttpServlet;

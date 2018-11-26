@@ -16,12 +16,13 @@ public class HttpProxyThread extends Thread {
     private ExecutorService executorService;
     private ServerSocket serverSocket;
 
+    //todo: разобраться с executorService
+    // сделать его общим на два прокси и при изменении кол-ва потоков текущий завершать корректно!
     public HttpProxyThread(ServerSocket serverSocket, int threadsCount) {
         this.executorService = Executors.newFixedThreadPool(threadsCount);
         this.serverSocket = serverSocket;
     }
 
-    @SuppressWarnings("Duplicates")
     @Override
     public void run() {
         while (true) {
@@ -36,4 +37,5 @@ public class HttpProxyThread extends Thread {
             }
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package util;
 
+import model.FakeCertificate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -8,7 +9,6 @@ import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure;
 import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
-import proxy.model.FakeCertificate;
 import sun.security.rsa.RSAPrivateCrtKeyImpl;
 import sun.security.tools.keytool.CertAndKeyGen;
 

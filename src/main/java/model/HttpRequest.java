@@ -1,4 +1,4 @@
-package proxy.model;
+package model;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
