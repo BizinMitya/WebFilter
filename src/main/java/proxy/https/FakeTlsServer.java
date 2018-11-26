@@ -3,7 +3,10 @@ package proxy.https;
 import model.FakeCertificate;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.crypto.tls.*;
+import org.bouncycastle.crypto.tls.Certificate;
+import org.bouncycastle.crypto.tls.DefaultTlsServer;
+import org.bouncycastle.crypto.tls.DefaultTlsSignerCredentials;
+import org.bouncycastle.crypto.tls.TlsSignerCredentials;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import util.CertUtil;
 
@@ -23,16 +26,9 @@ public class FakeTlsServer extends DefaultTlsServer {
     private static final Map<String, FakeCertificate> CERTIFICATE_CACHE = new HashMap<>();
 
     private String host;
-    private TlsServerProtocol tlsServerProtocol;
 
-    FakeTlsServer(String host, TlsServerProtocol tlsServerProtocol) {
+    FakeTlsServer(String host) {
         this.host = host;
-        this.tlsServerProtocol = tlsServerProtocol;
-    }
-
-    @Override
-    public void init(TlsServerContext context) {
-        super.init(context);
     }
 
     @Override
@@ -64,13 +60,6 @@ public class FakeTlsServer extends DefaultTlsServer {
         if (e != null) {
             LOGGER.error(s, e);
         }
-    }
-
-    @Override
-    public void notifyHandshakeComplete() throws IOException {
-        String hello = "<h1>Hello!</h1>";
-        tlsServerProtocol.getOutputStream().write(hello.getBytes());
-        tlsServerProtocol.getOutputStream().flush();
     }
 
 }

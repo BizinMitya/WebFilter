@@ -30,19 +30,28 @@ public class HttpsClientProxyThread implements Runnable {
 
     @Override
     public void run() {
+        TlsServerProtocol tlsServerProtocol = null;
         try {
             HttpRequest httpRequest = HttpRequest.readHttpRequest(socket.getInputStream());
             String host = httpRequest.getHost();
             if (httpRequest.isConnectMethod()) {
                 sendOkToConnect(socket);
-                TlsServerProtocol tlsServerProtocol = new TlsServerProtocol(
-                        socket.getInputStream(), socket.getOutputStream(), new SecureRandom());
-                tlsServerProtocol.accept(new FakeTlsServer(host, tlsServerProtocol));
+
+                tlsServerProtocol = new TlsServerProtocol(socket.getInputStream(),
+                        socket.getOutputStream(), new SecureRandom());
+                tlsServerProtocol.accept(new FakeTlsServer(host));
+
+                String hello = "<h1>Trusted MITM pass successfully for host: " + host + "!</h1>";
+                tlsServerProtocol.getOutputStream().write(hello.getBytes());
+                tlsServerProtocol.getOutputStream().flush();
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
+                if (tlsServerProtocol != null) {
+                    tlsServerProtocol.close();
+                }
                 socket.close();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
