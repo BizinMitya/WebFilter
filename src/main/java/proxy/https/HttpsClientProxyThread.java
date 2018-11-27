@@ -49,6 +49,7 @@ public class HttpsClientProxyThread implements Runnable {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
+                //todo: почему-то происходит рассинхрон потоков тут... Закрытие раньше происходит и обрыв соединения
                 if (tlsServerProtocol != null) {
                     tlsServerProtocol.close();
                 }

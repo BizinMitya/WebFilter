@@ -71,15 +71,17 @@ public abstract class CertUtil {
         x509V3CertificateGenerator.setPublicKey(pkcs10CertificationRequest.getPublicKey("BC"));
         x509V3CertificateGenerator.setSignatureAlgorithm("SHA256WithRSAEncryption");
 
-        x509V3CertificateGenerator.addExtension(X509Extension.authorityKeyIdentifier, true, new AuthorityKeyIdentifierStructure(rootCertificate));
-        x509V3CertificateGenerator.addExtension(X509Extension.subjectKeyIdentifier, true, new SubjectKeyIdentifierStructure(pkcs10CertificationRequest.getPublicKey("BC")));
+        x509V3CertificateGenerator.addExtension(X509Extension.authorityKeyIdentifier, false, new AuthorityKeyIdentifierStructure(rootCertificate));
+        x509V3CertificateGenerator.addExtension(X509Extension.subjectKeyIdentifier, false, new SubjectKeyIdentifierStructure(pkcs10CertificationRequest.getPublicKey("BC")));
         x509V3CertificateGenerator.addExtension(X509Extension.basicConstraints, true, new BasicConstraints(false));
         x509V3CertificateGenerator.addExtension(X509Extension.keyUsage, true, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment));
-        x509V3CertificateGenerator.addExtension(X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.anyExtendedKeyUsage));
+        x509V3CertificateGenerator.addExtension(X509Extension.extendedKeyUsage, false, new ExtendedKeyUsage(new KeyPurposeId[]{
+                KeyPurposeId.id_kp_serverAuth
+        }));
 
         GeneralName generalName = new GeneralName(GeneralName.dNSName, hostName);
         GeneralNames subjectAltNames = new GeneralNames(generalName);
-        x509V3CertificateGenerator.addExtension(X509Extension.subjectAlternativeName, true, subjectAltNames);
+        x509V3CertificateGenerator.addExtension(X509Extension.subjectAlternativeName, false, subjectAltNames);
 
         X509Certificate fakeCreatedCertificate = x509V3CertificateGenerator.generate(rootPrivateKey);
         return new FakeCertificate(fakeCreatedCertificate, keyPair.getPrivate());
