@@ -62,10 +62,4 @@ public class FakeTlsServer extends DefaultTlsServer {
         }
     }
 
-    @Override
-    public void notifyHandshakeComplete() throws IOException {
-        // если убрать, соединение с клиентом будет периодически обрываться
-        super.notifyHandshakeComplete();
-    }
-
 }

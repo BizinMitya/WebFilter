@@ -1,9 +1,10 @@
 package proxy.https;
 
-import model.HttpRequest;
-import model.HttpResponse;
+import model.WebRequest;
+import model.WebResponse;
 import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.tls.TlsServerProtocol;
+import proxy.ProxyHandler;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -11,6 +12,7 @@ import java.net.SocketException;
 import java.security.SecureRandom;
 
 import static dao.SettingsDAO.*;
+import static model.WebRequest.readWebRequest;
 
 /**
  * Поток для клиента HTTPS прокси-сервера
@@ -32,28 +34,28 @@ public class HttpsClientProxyThread implements Runnable {
     public void run() {
         TlsServerProtocol tlsServerProtocol = null;
         try {
-            HttpRequest httpRequest = HttpRequest.readHttpRequest(socket.getInputStream());
-            String host = httpRequest.getHost();
-            if (httpRequest.isConnectMethod()) {
+            WebRequest connectWebRequest = WebRequest.readWebRequest(socket.getInputStream());
+            String host = connectWebRequest.getHost();
+            if (connectWebRequest.isConnectMethod()) {
                 sendOkToConnect(socket);
 
                 tlsServerProtocol = new TlsServerProtocol(socket.getInputStream(),
                         socket.getOutputStream(), new SecureRandom());
                 tlsServerProtocol.accept(new FakeTlsServer(host));
 
-                String hello = "<h1>Trusted MITM pass successfully for host: " + host + "!</h1>";
-                tlsServerProtocol.getOutputStream().write(hello.getBytes());
+                WebRequest webRequestFromClient = readWebRequest(tlsServerProtocol.getInputStream());// парсинг https-запроса от браузера
+                WebResponse webResponseFromServer = ProxyHandler.doHttpsRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
+                WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
+                tlsServerProtocol.getOutputStream().write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
                 tlsServerProtocol.getOutputStream().flush();
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
-                //todo: почему-то происходит рассинхрон потоков тут... Закрытие раньше происходит и обрыв соединения
                 if (tlsServerProtocol != null) {
                     tlsServerProtocol.close();
                 }
-                socket.close();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -61,11 +63,11 @@ public class HttpsClientProxyThread implements Runnable {
     }
 
     private void sendOkToConnect(Socket sslSocket) throws IOException {
-        HttpResponse httpResponse = new HttpResponse();
-        httpResponse.setStatusCode(200);
-        httpResponse.setReasonPhrase("OK");
-        httpResponse.setVersion("HTTP/1.1");
-        sslSocket.getOutputStream().write(httpResponse.getAllResponseInBytes());
+        WebResponse webResponse = new WebResponse();
+        webResponse.setStatusCode(200);
+        webResponse.setReasonPhrase("OK");
+        webResponse.setVersion("HTTP/1.1");
+        sslSocket.getOutputStream().write(webResponse.getAllResponseInBytes());
         sslSocket.getOutputStream().flush();
     }
 

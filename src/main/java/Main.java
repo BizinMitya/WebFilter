@@ -56,6 +56,7 @@ public class Main {
         servletHandler.addServletWithMapping(SettingsProxyServlet.class, "/proxy/settings");
         servletHandler.addServletWithMapping(BlacklistProxyServlet.class, "/proxy/blacklist");
         servletHandler.addServletWithMapping(MonitoringServlet.class, "/proxy/monitoring");
+        servletHandler.addServletWithMapping(DownloadRootCertificateServlet.class, "/proxy/downloadRootCertificate");
     }
 
     private static void openInBrowser(String url) {

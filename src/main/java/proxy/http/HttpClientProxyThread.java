@@ -1,7 +1,7 @@
 package proxy.http;
 
-import model.HttpRequest;
-import model.HttpResponse;
+import model.WebRequest;
+import model.WebResponse;
 import org.apache.log4j.Logger;
 import proxy.ProxyHandler;
 
@@ -11,7 +11,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import static dao.SettingsDAO.*;
-import static model.HttpRequest.readHttpRequest;
+import static model.WebRequest.readWebRequest;
 
 /**
  * Поток для клиента HTTP прокси-сервера
@@ -38,11 +38,10 @@ public class HttpClientProxyThread implements Runnable {
     @Override
     public void run() {
         try {
-            ProxyHandler proxyHandler = new ProxyHandler();
-            HttpRequest httpRequestFromClient = readHttpRequest(socket.getInputStream());// парсинг http-запроса от браузера
-            HttpResponse httpResponseFromServer = proxyHandler.toServer(httpRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
-            HttpResponse httpResponseToClient = proxyHandler.fromServer(httpResponseFromServer);// обработка ответа от сервера
-            socket.getOutputStream().write(httpResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+            WebRequest webRequestFromClient = readWebRequest(socket.getInputStream());// парсинг http-запроса от браузера
+            WebResponse webResponseFromServer = ProxyHandler.doHttpRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
+            WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
+            socket.getOutputStream().write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
             socket.getOutputStream().flush();
         } catch (IOException e) {
             if (!(e instanceof SocketException) && !(e instanceof SocketTimeoutException)) {

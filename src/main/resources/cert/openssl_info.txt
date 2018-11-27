@@ -1,5 +1,5 @@
 Сгенерировать приватный ключ для корневого сертификата:
-openssl genrsa 2048 | openssl pkcs8 -topk8 -nocrypt -out root.pem
+openssl genrsa 2048 | openssl pkcs8 -topk8 -nocrypt -out WebFilterRoot.pem
 
 Сгенерировать самоподписанный корневой сертификат:
-openssl req -x509 -new -key root.pem -days 10000 -out root.crt
+openssl req -x509 -new -key WebFilterRoot.pem -days 10000 -out WebFilterRoot.crt

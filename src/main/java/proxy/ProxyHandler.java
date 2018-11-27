@@ -2,8 +2,8 @@ package proxy;
 
 import classificators.Category;
 import model.Host;
-import model.HttpRequest;
-import model.HttpResponse;
+import model.WebRequest;
+import model.WebResponse;
 import org.apache.log4j.Logger;
 import util.HostUtil;
 
@@ -13,31 +13,41 @@ import java.util.Map;
 
 import static dao.BlacklistDAO.isHostInBlacklist;
 
-public class ProxyHandler {
+public abstract class ProxyHandler {
 
     private static final Logger LOGGER = Logger.getLogger(ProxyHandler.class);
 
-    public HttpResponse toServer(HttpRequest httpRequest) throws IOException {
-        Host host = HostUtil.createHostFromHostOrIp(httpRequest.getHost());
+    public static WebResponse doHttpRequestToServer(WebRequest webRequest) throws IOException {
+        Host host = HostUtil.createHostFromHostOrIp(webRequest.getHost());
         if (isHostInBlacklist(host)) {
-            LOGGER.trace(httpRequest.getMethod() + " " + httpRequest.getURI());
-            return HttpResponse.hostInBlacklistResponse();
+            LOGGER.trace(webRequest.getMethod() + " " + webRequest.getURI());
+            return WebResponse.hostInBlacklistResponse();
         } else {
-            return httpRequest.doRequest();
+            return webRequest.doHttpRequest();
         }
     }
 
-    public HttpResponse fromServer(HttpResponse httpResponse) {
-        if (httpResponse.getBody() != null && httpResponse.isHtml()) {
+    public static WebResponse doHttpsRequestToServer(WebRequest webRequest) throws IOException {
+        Host host = HostUtil.createHostFromHostOrIp(webRequest.getHost());
+        if (isHostInBlacklist(host)) {
+            LOGGER.trace(webRequest.getMethod() + " " + webRequest.getURI());
+            return WebResponse.hostInBlacklistResponse();
+        } else {
+            return webRequest.doHttpsRequest();
+        }
+    }
+
+    public static WebResponse fromServer(WebResponse webResponse) {
+        if (webResponse.getBody() != null && webResponse.isHtml()) {
             try {
-                Map<Category, Double> categoryProbabilityMap = httpResponse.classifyContent();
-                httpResponse.createCategoriesInfoScript(categoryProbabilityMap);
+                Map<Category, Double> categoryProbabilityMap = webResponse.classifyContent();
+                webResponse.createCategoriesInfoScript(categoryProbabilityMap);
             } catch (UnsupportedEncodingException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        LOGGER.trace(httpResponse.getStatusCode());
-        return httpResponse;
+        LOGGER.trace(webResponse.getStatusCode());
+        return webResponse;
     }
 
 }

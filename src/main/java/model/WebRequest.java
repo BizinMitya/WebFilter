@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.SocketException;
 import java.util.HashMap;
@@ -24,10 +26,10 @@ import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.entity.ContentType.TEXT_HTML;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 
-public class HttpRequest {
+public class WebRequest {
 
     private static final String CR_LF = "\r\n";
-    private static final Logger LOGGER = Logger.getLogger(HttpRequest.class);
+    private static final Logger LOGGER = Logger.getLogger(WebRequest.class);
     private static final String OPTIONS = "OPTIONS";
     private static final String GET = "GET";
     private static final String HEAD = "HEAD";
@@ -40,53 +42,53 @@ public class HttpRequest {
     private static final String CHARSET = "charset";
     private static final String CONTENT = "content";
     private static final String HTTP_EQUIV = "http-equiv";
-    private int timeoutForServer;//таймаут на чтение данных от сервера
+    private int timeoutForServer;// таймаут на чтение данных от сервера
     private String method;
     private String URI;
     private String version;
     private Map<String, String> headers;
     private byte[] body;
 
-    public HttpRequest() {
+    public WebRequest() {
         headers = new HashMap<>();
         setSettings();
     }
 
-    public static HttpRequest readHttpRequest(InputStream inputStream) throws IOException {
-        HttpRequest httpRequest = new HttpRequest();
+    public static WebRequest readWebRequest(InputStream inputStream) throws IOException {
+        WebRequest webRequest = new WebRequest();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
         String startLine = bufferedReader.readLine();
         if (startLine == null) {
             throw new SocketException();
         }
-        parseStartLine(httpRequest, startLine);
+        parseStartLine(webRequest, startLine);
         String header = bufferedReader.readLine();
         while (header.length() > 0) {
-            parseHeader(httpRequest, header);
+            parseHeader(webRequest, header);
             header = bufferedReader.readLine();
         }
-        if (httpRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
-            int contentLength = Integer.parseInt(httpRequest.getHeaders().get(CONTENT_LENGTH));
+        if (webRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
+            int contentLength = Integer.parseInt(webRequest.getHeaders().get(CONTENT_LENGTH));
             char[] body = new char[contentLength];
             bufferedReader.read(body);
-            httpRequest.body = new String(body).getBytes(UTF_8);
+            webRequest.body = new String(body).getBytes(UTF_8);
         }
-        return httpRequest;
+        return webRequest;
     }
 
-    private static void parseStartLine(HttpRequest httpRequest, String startLine) {
+    private static void parseStartLine(WebRequest webRequest, String startLine) {
         String[] startLineParameters = startLine.split(" ");
-        httpRequest.method = startLineParameters[0];
-        httpRequest.URI = startLineParameters[1];
-        httpRequest.version = startLineParameters[2];
+        webRequest.method = startLineParameters[0];
+        webRequest.URI = startLineParameters[1];
+        webRequest.version = startLineParameters[2];
     }
 
-    private static void parseHeader(HttpRequest httpRequest, String header) {
+    private static void parseHeader(WebRequest webRequest, String header) {
         int idx = header.indexOf(":");
         if (idx == -1) {
             LOGGER.error("Некорректный параметр заголовка: " + header);
         }
-        httpRequest.headers.put(header.substring(0, idx), header.substring(idx + 2));
+        webRequest.headers.put(header.substring(0, idx), header.substring(idx + 2));
     }
 
     public boolean isConnectMethod() {
@@ -168,8 +170,8 @@ public class HttpRequest {
         }
     }
 
-    public HttpResponse doRequest() throws IOException {
-        HttpResponse httpResponse = new HttpResponse();
+    public WebResponse doHttpRequest() throws IOException {
+        WebResponse webResponse = new WebResponse();
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             RequestConfig requestConfig = RequestConfig.custom()
                     .setCircularRedirectsAllowed(true)
@@ -184,31 +186,74 @@ public class HttpRequest {
                 request.setConfig(requestConfig);
                 addHeaders(request);
                 try (CloseableHttpResponse response = client.execute(request)) {
-                    httpResponse.setStatusCode(response.getStatusLine().getStatusCode());
-                    httpResponse.setReasonPhrase(response.getStatusLine().getReasonPhrase());
-                    httpResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
-                    httpResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
+                    webResponse.setStatusCode(response.getStatusLine().getStatusCode());
+                    webResponse.setReasonPhrase(response.getStatusLine().getReasonPhrase());
+                    webResponse.setVersion(response.getStatusLine().getProtocolVersion().toString());
+                    webResponse.setHeaders(getMapHeaders(response.getAllHeaders()));
                     if (response.getEntity() != null) {
                         byte[] body = IOUtils.toByteArray(response.getEntity().getContent());
-                        httpResponse.setBody(body);
+                        webResponse.setBody(body);
                         Header contentTypeHeader = response.getEntity().getContentType();
                         if (contentTypeHeader != null) {
                             String contentType = contentTypeHeader.getValue();
-                            httpResponse.setMimeType(getMimeTypeFromContentType(contentType));
-                            httpResponse.setBodyEncoding(getEncoding(body, contentType));
+                            webResponse.setMimeType(getMimeTypeFromContentType(contentType));
+                            webResponse.setBodyEncoding(getEncoding(body, contentType));
                         }
-                        if (httpResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
-                            httpResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+                        if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
+                            webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
                         }
                     }
                 }
             } else {// connect method
-                httpResponse.setStatusCode(200);
-                httpResponse.setReasonPhrase("OK");
-                httpResponse.setVersion("HTTP/1.1");
+                webResponse.setStatusCode(200);
+                webResponse.setReasonPhrase("OK");
+                webResponse.setVersion("HTTP/1.1");
             }
         }
-        return httpResponse;
+        return webResponse;
+    }
+
+    public WebResponse doHttpsRequest() throws IOException {
+        WebResponse webResponse = new WebResponse();
+        if (!method.equals(CONNECT)) {
+            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+            try (SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(getHost(), 443);
+                 InputStream inputStream = sslSocket.getInputStream();
+                 OutputStream outputStream = sslSocket.getOutputStream()) {
+                sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
+                sslSocket.startHandshake();
+                outputStream.write(getAllRequestInBytes());
+                outputStream.flush();
+                webResponse.parseResponse(inputStream);
+            }
+        } else {
+            webResponse.setStatusCode(200);
+            webResponse.setReasonPhrase("OK");
+            webResponse.setVersion("HTTP/1.1");
+        }
+        return webResponse;
+    }
+
+    @SuppressWarnings("Duplicates")
+    public byte[] getAllRequestInBytes() {
+        byte[] result = null;
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(getMethod()).append(" ").append(getURI()).append(" ").append(getVersion()).append(CR_LF);
+            for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
+                stringBuilder.append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
+            }
+            stringBuilder.append(CR_LF);
+            byteArrayOutputStream.write(stringBuilder.toString().getBytes(/*getEncoding()*/));
+            if (body != null) {
+                byteArrayOutputStream.write(body);
+            }
+            byteArrayOutputStream.flush();
+            result = byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
     }
 
     private String getCharsetFromContentType(String contentType) {

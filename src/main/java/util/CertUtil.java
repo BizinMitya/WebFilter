@@ -46,8 +46,8 @@ public abstract class CertUtil {
     }
 
     public static FakeCertificate createFakeCertificate(String hostName) throws NoSuchProviderException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, CertificateException, IOException, InvalidKeySpecException {
-        X509Certificate rootCertificate = getCertificateFromFile("root.crt");
-        PrivateKey rootPrivateKey = getPrivateKeyFromPemFile("root.pem");
+        X509Certificate rootCertificate = getCertificateFromFile("WebFilterRoot.crt");
+        PrivateKey rootPrivateKey = getPrivateKeyFromPemFile("WebFilterRoot.pem");
 
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
         keyPairGenerator.initialize(2048);

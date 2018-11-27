@@ -6,9 +6,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +14,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.entity.ContentType.*;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 import static util.FileUtil.getHostInBlacklistPage;
 
-public class HttpResponse {
+public class WebResponse {
 
     private static final String CR_LF = "\r\n";
-    private static final Logger LOGGER = Logger.getLogger(HttpResponse.class);
+    private static final Logger LOGGER = Logger.getLogger(WebResponse.class);
     private String version;
     private int statusCode;
     private String reasonPhrase;
@@ -34,20 +34,20 @@ public class HttpResponse {
     private String bodyEncoding;
     private String mimeType;
 
-    public HttpResponse() {
+    public WebResponse() {
         headers = new HashMap<>();
     }
 
-    public static HttpResponse hostInBlacklistResponse() {
-        HttpResponse httpResponse = new HttpResponse();
-        httpResponse.setStatusCode(SC_OK);
-        httpResponse.setReasonPhrase("");
-        httpResponse.setVersion("HTTP/1.1");
-        httpResponse.setHeaders(new HashMap<>());
-        httpResponse.getHeaders().put(TRANSFER_ENCODING, IDENTITY.toString());
+    public static WebResponse hostInBlacklistResponse() {
+        WebResponse webResponse = new WebResponse();
+        webResponse.setStatusCode(SC_OK);
+        webResponse.setReasonPhrase("");
+        webResponse.setVersion("HTTP/1.1");
+        webResponse.setHeaders(new HashMap<>());
+        webResponse.getHeaders().put(TRANSFER_ENCODING, IDENTITY.toString());
         byte[] body = getHostInBlacklistPage();
-        httpResponse.setBody(body);
-        return httpResponse;
+        webResponse.setBody(body);
+        return webResponse;
     }
 
     public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {
@@ -98,6 +98,7 @@ public class HttpResponse {
         this.bodyEncoding = bodyEncoding;
     }
 
+    @SuppressWarnings("Duplicates")
     public byte[] getAllResponseInBytes() {
         byte[] result = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
@@ -117,6 +118,47 @@ public class HttpResponse {
             LOGGER.error(e.getMessage(), e);
         }
         return result;
+    }
+
+    private void parseStartLine(String startLine) {
+        Pattern pattern = Pattern.compile("HTTP/\\d\\.\\d\\s\\d\\d\\d\\s.*");
+        Matcher matcher = pattern.matcher(startLine);
+        if (matcher.matches()) {
+            String[] lines = startLine.split(" ");
+            version = lines[0];
+            statusCode = Integer.parseInt(lines[1]);
+            reasonPhrase = startLine.substring(startLine.lastIndexOf(lines[1]) + 4);
+        }
+    }
+
+    private void parseHeader(String header) {
+        Pattern pattern = Pattern.compile(".+:\\s.*");
+        Matcher matcher = pattern.matcher(header);
+        if (matcher.matches()) {
+            String[] headers = header.split(": ");
+            this.headers.put(headers[0], headers[1]);
+        }
+    }
+
+    public void parseResponse(InputStream inputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
+        String startLine = bufferedReader.readLine();
+        if (startLine == null) {
+            throw new IOException("Start line is null!");
+        }
+        parseStartLine(startLine);
+        String header = bufferedReader.readLine();
+        while (header.length() > 0) {
+            parseHeader(header);
+            header = bufferedReader.readLine();
+        }
+        if (getHeaders().containsKey(CONTENT_LENGTH)) {
+            //todo: разобрать тут варианты кодировния и правильно их распарсить!
+            int contentLength = Integer.parseInt(getHeaders().get(CONTENT_LENGTH));
+            char[] body = new char[contentLength];
+            bufferedReader.read(body);
+            this.body = new String(body).getBytes(UTF_8);
+        }
     }
 
     public String getVersion() {
