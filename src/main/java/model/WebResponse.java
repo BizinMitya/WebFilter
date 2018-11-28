@@ -144,7 +144,7 @@ public class WebResponse {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
         String startLine = bufferedReader.readLine();
         if (startLine == null) {
-            throw new IOException("Start line is null!");
+            throw new IOException("Стартовая строка в ответе от сервера null!");
         }
         parseStartLine(startLine);
         String header = bufferedReader.readLine();
@@ -153,7 +153,7 @@ public class WebResponse {
             header = bufferedReader.readLine();
         }
         if (getHeaders().containsKey(CONTENT_LENGTH)) {
-            //todo: разобрать тут варианты кодировния и правильно их распарсить!
+            //todo: разобрать тут варианты кодирования и правильно их распарсить!
             int contentLength = Integer.parseInt(getHeaders().get(CONTENT_LENGTH));
             char[] body = new char[contentLength];
             bufferedReader.read(body);

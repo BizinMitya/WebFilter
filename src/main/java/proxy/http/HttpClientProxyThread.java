@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import proxy.ProxyHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -37,12 +39,12 @@ public class HttpClientProxyThread implements Runnable {
      */
     @Override
     public void run() {
-        try {
-            WebRequest webRequestFromClient = readWebRequest(socket.getInputStream());// парсинг http-запроса от браузера
+        try (InputStream inputStream = socket.getInputStream();
+             OutputStream outputStream = socket.getOutputStream()) {
+            WebRequest webRequestFromClient = readWebRequest(inputStream);// парсинг http-запроса от браузера
             WebResponse webResponseFromServer = ProxyHandler.doHttpRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
             WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
-            socket.getOutputStream().write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
-            socket.getOutputStream().flush();
+            outputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
         } catch (IOException e) {
             if (!(e instanceof SocketException) && !(e instanceof SocketTimeoutException)) {
                 LOGGER.error(e.getMessage(), e);

@@ -11,6 +11,7 @@ import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.*;
@@ -24,9 +25,11 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class CertUtil {
 
-    private static X509Certificate getCertificateFromFile(String fileName) throws CertificateException {
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) certificateFactory.generateCertificate(CertUtil.class.getResourceAsStream("/cert/" + fileName));
+    private static X509Certificate getCertificateFromFile(String fileName) throws CertificateException, IOException {
+        try (InputStream inputStream = CertUtil.class.getResourceAsStream("/cert/" + fileName)) {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            return (X509Certificate) certificateFactory.generateCertificate(inputStream);
+        }
     }
 
     /**
@@ -36,7 +39,8 @@ public abstract class CertUtil {
      * @return приватный ключ из PEM-файла
      */
     private static PrivateKey getPrivateKeyFromPemFile(String fileName) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
-        try (PemReader pemReader = new PemReader(new InputStreamReader(CertUtil.class.getResourceAsStream("/cert/" + fileName)))) {
+        try (InputStream inputStream = CertUtil.class.getResourceAsStream("/cert/" + fileName);
+             PemReader pemReader = new PemReader(new InputStreamReader(inputStream))) {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
             PemObject pemObject = pemReader.readPemObject();
             byte[] content = pemObject.getContent();

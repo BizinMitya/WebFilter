@@ -14,6 +14,7 @@ import org.jsoup.select.Elements;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.SocketException;
 import java.util.HashMap;
@@ -205,7 +206,7 @@ public class WebRequest {
                     }
                 }
             } else {// connect method
-                webResponse.setStatusCode(200);
+                webResponse.setStatusCode(HttpServletResponse.SC_OK);
                 webResponse.setReasonPhrase("OK");
                 webResponse.setVersion("HTTP/1.1");
             }
@@ -227,7 +228,7 @@ public class WebRequest {
                 webResponse.parseResponse(inputStream);
             }
         } else {
-            webResponse.setStatusCode(200);
+            webResponse.setStatusCode(HttpServletResponse.SC_OK);
             webResponse.setReasonPhrase("OK");
             webResponse.setVersion("HTTP/1.1");
         }

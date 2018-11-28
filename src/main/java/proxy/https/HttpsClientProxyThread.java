@@ -6,7 +6,10 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.tls.TlsServerProtocol;
 import proxy.ProxyHandler;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.SecureRandom;
@@ -32,30 +35,29 @@ public class HttpsClientProxyThread implements Runnable {
 
     @Override
     public void run() {
-        TlsServerProtocol tlsServerProtocol = null;
-        try {
-            WebRequest connectWebRequest = WebRequest.readWebRequest(socket.getInputStream());
+        try (InputStream socketInputStream = socket.getInputStream();
+             OutputStream socketOutputStream = socket.getOutputStream()) {
+            WebRequest connectWebRequest = WebRequest.readWebRequest(socketInputStream);
             String host = connectWebRequest.getHost();
             if (connectWebRequest.isConnectMethod()) {
                 sendOkToConnect(socket);
+                TlsServerProtocol tlsServerProtocol = new TlsServerProtocol(socketInputStream,
+                        socketOutputStream, new SecureRandom());
+                try (InputStream tlsInputStream = tlsServerProtocol.getInputStream();
+                     OutputStream tlsOutputStream = tlsServerProtocol.getOutputStream()) {
+                    tlsServerProtocol.accept(new FakeTlsServer(host));
 
-                tlsServerProtocol = new TlsServerProtocol(socket.getInputStream(),
-                        socket.getOutputStream(), new SecureRandom());
-                tlsServerProtocol.accept(new FakeTlsServer(host));
-
-                WebRequest webRequestFromClient = readWebRequest(tlsServerProtocol.getInputStream());// парсинг https-запроса от браузера
-                WebResponse webResponseFromServer = ProxyHandler.doHttpsRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
-                WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
-                tlsServerProtocol.getOutputStream().write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
-                tlsServerProtocol.getOutputStream().flush();
+                    WebRequest webRequestFromClient = readWebRequest(tlsInputStream);// парсинг https-запроса от браузера
+                    WebResponse webResponseFromServer = ProxyHandler.doHttpsRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
+                    WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
+                    tlsOutputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+                }
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
-                if (tlsServerProtocol != null) {
-                    tlsServerProtocol.close();
-                }
+                socket.close();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -64,7 +66,7 @@ public class HttpsClientProxyThread implements Runnable {
 
     private void sendOkToConnect(Socket sslSocket) throws IOException {
         WebResponse webResponse = new WebResponse();
-        webResponse.setStatusCode(200);
+        webResponse.setStatusCode(HttpServletResponse.SC_OK);
         webResponse.setReasonPhrase("OK");
         webResponse.setVersion("HTTP/1.1");
         sslSocket.getOutputStream().write(webResponse.getAllResponseInBytes());

@@ -9,7 +9,9 @@ import util.HostUtil;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -24,11 +26,10 @@ public class BlacklistProxyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
+        try (Writer writer = response.getWriter()) {
             response.setCharacterEncoding(UTF_8.toString());
             JSONArray jsonArray = new JSONArray(getAllHosts());
-            response.getWriter().write(jsonArray.toString());
-            response.getWriter().flush();
+            writer.write(jsonArray.toString());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -37,9 +38,9 @@ public class BlacklistProxyServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
+        try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
-            String body = request.getReader().readLine();
+            String body = reader.readLine();
             String[] hostParam = body.split("=");
             if (hostParam.length == 2) {
                 String hostOrIp = URLDecoder.decode(hostParam[1], UTF_8.toString());
@@ -63,9 +64,9 @@ public class BlacklistProxyServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        try {
+        try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
-            String body = request.getReader().readLine();
+            String body = reader.readLine();
             String[] hostParam = body.split("=");
             if (hostParam.length == 2) {
                 String ip = URLDecoder.decode(hostParam[1], UTF_8.toString());

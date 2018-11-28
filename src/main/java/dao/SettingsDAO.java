@@ -72,6 +72,7 @@ public abstract class SettingsDAO {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     public static void addDefaultData() {
         if (!hasKey(HTTP_PROXY_PORT)) {
             addSetting(HTTP_PROXY_PORT, String.valueOf(DEFAULT_HTTP_PROXY_PORT));

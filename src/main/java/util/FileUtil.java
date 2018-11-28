@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.tartarus.snowball.ext.RussianStemmer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,8 +38,8 @@ public abstract class FileUtil {
     @Nullable
     public static byte[] getHostInBlacklistPage() {
         byte[] result = null;
-        try {
-            result = IOUtils.toByteArray(FileUtil.class.getResourceAsStream(PATH_TO_HOST_IN_BLACKLIST_PAGE));
+        try (InputStream inputStream = FileUtil.class.getResourceAsStream(PATH_TO_HOST_IN_BLACKLIST_PAGE)) {
+            result = IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }

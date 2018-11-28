@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.h2.jdbcx.JdbcDataSource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,8 +42,10 @@ public abstract class JDBC {
     }
 
     private static String getSQLScriptAsString(String scriptFileName) throws IOException {
-        byte[] data = IOUtils.toByteArray(JDBC.class.getResourceAsStream(scriptFileName));
-        return new String(data, UTF_8);
+        try (InputStream inputStream = JDBC.class.getResourceAsStream(scriptFileName)) {
+            byte[] data = IOUtils.toByteArray(inputStream);
+            return new String(data, UTF_8);
+        }
     }
 
 }

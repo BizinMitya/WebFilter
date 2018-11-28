@@ -7,7 +7,9 @@ import proxy.Proxy;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,10 +23,10 @@ public class SettingsProxyServlet extends HttpServlet {
     private Proxy proxy = Proxy.getInstance();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
+        try (Writer writer = response.getWriter()) {
             Map<String, String> settings = getAllSettings();
             response.setCharacterEncoding(UTF_8.toString());
-            response.getWriter().write(new JSONObject(settings).toString());
+            writer.write(new JSONObject(settings).toString());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -32,9 +34,9 @@ public class SettingsProxyServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
+        try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
-            JSONObject settingsJson = new JSONObject(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+            JSONObject settingsJson = new JSONObject(reader.lines().collect(Collectors.joining(System.lineSeparator())));
             saveSettingsWithValidation(settingsJson);
             if (proxy.isRunningHttp()) {
                 proxy.restartHttp();
@@ -48,6 +50,7 @@ public class SettingsProxyServlet extends HttpServlet {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     private void saveSettingsWithValidation(JSONObject settingsJson) {
         int httpProxyPort = settingsJson.has(HTTP_PROXY_PORT) ?
                 settingsJson.optInt(HTTP_PROXY_PORT, DEFAULT_HTTP_PROXY_PORT) :
