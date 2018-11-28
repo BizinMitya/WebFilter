@@ -217,6 +217,7 @@ public class WebRequest {
     public WebResponse doHttpsRequest() throws IOException {
         WebResponse webResponse = new WebResponse();
         if (!method.equals(CONNECT)) {
+            //todo: попробовать сделать тут HTTPS соединение через HttpClientBuilder
             SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
             try (SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(getHost(), 443);
                  InputStream inputStream = sslSocket.getInputStream();
