@@ -43,10 +43,9 @@ public class HttpsClientProxyThread implements Runnable {
                 sendOkToConnect(socket);
                 TlsServerProtocol tlsServerProtocol = new TlsServerProtocol(socketInputStream,
                         socketOutputStream, new SecureRandom());
+                tlsServerProtocol.accept(new FakeTlsServer(host));
                 try (InputStream tlsInputStream = tlsServerProtocol.getInputStream();
                      OutputStream tlsOutputStream = tlsServerProtocol.getOutputStream()) {
-                    tlsServerProtocol.accept(new FakeTlsServer(host));
-
                     WebRequest webRequestFromClient = readWebRequest(tlsInputStream);// парсинг https-запроса от браузера
                     WebResponse webResponseFromServer = ProxyHandler.doHttpsRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
                     WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера

@@ -12,13 +12,16 @@ import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
-import javax.net.ssl.SSLSocket;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.SocketException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static dao.SettingsDAO.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -217,16 +220,30 @@ public class WebRequest {
     public WebResponse doHttpsRequest() throws IOException {
         WebResponse webResponse = new WebResponse();
         if (!method.equals(CONNECT)) {
-            //todo: попробовать сделать тут HTTPS соединение через HttpClientBuilder
             SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-            try (SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(getHost(), 443);
-                 InputStream inputStream = sslSocket.getInputStream();
-                 OutputStream outputStream = sslSocket.getOutputStream()) {
-                sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
-                sslSocket.startHandshake();
-                outputStream.write(getAllRequestInBytes());
-                outputStream.flush();
-                webResponse.parseResponse(inputStream);
+            String urlString = "https://" + getHost() + "/";
+            URL url = new URL(urlString);
+            HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
+            httpsURLConnection.setRequestMethod(getMethod());
+            httpsURLConnection.setSSLSocketFactory(sslSocketFactory);
+            httpsURLConnection.connect();
+            webResponse.setStatusCode(httpsURLConnection.getResponseCode());
+            webResponse.setReasonPhrase(httpsURLConnection.getResponseMessage());
+            if (httpsURLConnection.getHeaderFields().containsKey(null)) {
+                String startLine = httpsURLConnection.getHeaderFields().get(null).get(0);
+                webResponse.setVersion(startLine.split(" ")[0]);
+            }
+            webResponse.setHeaders(httpsURLConnection.getHeaderFields().entrySet().stream()
+                    .filter(entry -> Objects.nonNull(entry.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0))));
+            if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
+                webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+            }
+            byte[] body = IOUtils.toByteArray(httpsURLConnection.getInputStream());
+            if (body != null && hasBody(getMethod())) {
+                webResponse.setBody(body);
+                webResponse.setMimeType(httpsURLConnection.getContentType());
+                webResponse.setBodyEncoding(getEncoding(webResponse.getBody(), httpsURLConnection.getContentType()));
             }
         } else {
             webResponse.setStatusCode(HttpServletResponse.SC_OK);
@@ -236,26 +253,8 @@ public class WebRequest {
         return webResponse;
     }
 
-    @SuppressWarnings("Duplicates")
-    public byte[] getAllRequestInBytes() {
-        byte[] result = null;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(getMethod()).append(" ").append(getURI()).append(" ").append(getVersion()).append(CR_LF);
-            for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
-                stringBuilder.append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
-            }
-            stringBuilder.append(CR_LF);
-            byteArrayOutputStream.write(stringBuilder.toString().getBytes(/*getEncoding()*/));
-            if (body != null) {
-                byteArrayOutputStream.write(body);
-            }
-            byteArrayOutputStream.flush();
-            result = byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return result;
+    private boolean hasBody(String method) {
+       //todo: реализовать
     }
 
     private String getCharsetFromContentType(String contentType) {

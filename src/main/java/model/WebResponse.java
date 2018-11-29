@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +16,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.entity.ContentType.*;
@@ -118,47 +118,6 @@ public class WebResponse {
             LOGGER.error(e.getMessage(), e);
         }
         return result;
-    }
-
-    private void parseStartLine(String startLine) {
-        Pattern pattern = Pattern.compile("HTTP/\\d\\.\\d\\s\\d\\d\\d\\s.*");
-        Matcher matcher = pattern.matcher(startLine);
-        if (matcher.matches()) {
-            String[] lines = startLine.split(" ");
-            version = lines[0];
-            statusCode = Integer.parseInt(lines[1]);
-            reasonPhrase = startLine.substring(startLine.lastIndexOf(lines[1]) + 4);
-        }
-    }
-
-    private void parseHeader(String header) {
-        Pattern pattern = Pattern.compile(".+:\\s.*");
-        Matcher matcher = pattern.matcher(header);
-        if (matcher.matches()) {
-            String[] headers = header.split(": ");
-            this.headers.put(headers[0], headers[1]);
-        }
-    }
-
-    public void parseResponse(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
-        String startLine = bufferedReader.readLine();
-        if (startLine == null) {
-            throw new IOException("Стартовая строка в ответе от сервера null!");
-        }
-        parseStartLine(startLine);
-        String header = bufferedReader.readLine();
-        while (header.length() > 0) {
-            parseHeader(header);
-            header = bufferedReader.readLine();
-        }
-        if (getHeaders().containsKey(CONTENT_LENGTH)) {
-            //todo: разобрать тут варианты кодирования и правильно их распарсить!
-            int contentLength = Integer.parseInt(getHeaders().get(CONTENT_LENGTH));
-            char[] body = new char[contentLength];
-            bufferedReader.read(body);
-            this.body = new String(body).getBytes(UTF_8);
-        }
     }
 
     public String getVersion() {
