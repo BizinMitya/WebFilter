@@ -9,30 +9,25 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 
-import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.SocketException;
-import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static dao.SettingsDAO.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
-import static org.apache.http.entity.ContentType.TEXT_HTML;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 
-public class WebRequest {
+public class WebRequest extends Web {
 
-    private static final String CR_LF = "\r\n";
     private static final Logger LOGGER = Logger.getLogger(WebRequest.class);
     private static final String OPTIONS = "OPTIONS";
     private static final String GET = "GET";
@@ -43,15 +38,9 @@ public class WebRequest {
     private static final String DELETE = "DELETE";
     private static final String TRACE = "TRACE";
     private static final String CONNECT = "CONNECT";
-    private static final String CHARSET = "charset";
-    private static final String CONTENT = "content";
-    private static final String HTTP_EQUIV = "http-equiv";
     private int timeoutForServer;// таймаут на чтение данных от сервера
     private String method;
     private String URI;
-    private String version;
-    private Map<String, String> headers;
-    private byte[] body;
 
     public WebRequest() {
         headers = new HashMap<>();
@@ -60,14 +49,14 @@ public class WebRequest {
 
     public static WebRequest readWebRequest(InputStream inputStream) throws IOException {
         WebRequest webRequest = new WebRequest();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String startLine = bufferedReader.readLine();
         if (startLine == null) {
             throw new SocketException();
         }
         parseStartLine(webRequest, startLine);
         String header = bufferedReader.readLine();
-        while (header.length() > 0) {
+        while (header != null && header.length() > 0) {
             parseHeader(webRequest, header);
             header = bufferedReader.readLine();
         }
@@ -80,10 +69,10 @@ public class WebRequest {
         return webRequest;
     }
 
-    private static void parseStartLine(WebRequest webRequest, String startLine) {
+    private static void parseStartLine(WebRequest webRequest, String startLine) throws UnsupportedEncodingException {
         String[] startLineParameters = startLine.split(" ");
         webRequest.method = startLineParameters[0];
-        webRequest.URI = startLineParameters[1];
+        webRequest.URI = URLDecoder.decode(startLineParameters[1], UTF_8.toString());
         webRequest.version = startLineParameters[2];
     }
 
@@ -106,7 +95,7 @@ public class WebRequest {
 
     private void addHeaders(org.apache.http.HttpRequest request) {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            if (!CONTENT_LENGTH.equals(entry.getKey())) {//устанавливается автоматически при установки байтового массива body
+            if (!CONTENT_LENGTH.equals(entry.getKey())) {// устанавливается автоматически при установки байтового массива body
                 request.addHeader(entry.getKey(), entry.getValue());
             }
         }
@@ -221,29 +210,15 @@ public class WebRequest {
         WebResponse webResponse = new WebResponse();
         if (!method.equals(CONNECT)) {
             SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-            String urlString = "https://" + getHost() + "/";
-            URL url = new URL(urlString);
-            HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
-            httpsURLConnection.setRequestMethod(getMethod());
-            httpsURLConnection.setSSLSocketFactory(sslSocketFactory);
-            httpsURLConnection.connect();
-            webResponse.setStatusCode(httpsURLConnection.getResponseCode());
-            webResponse.setReasonPhrase(httpsURLConnection.getResponseMessage());
-            if (httpsURLConnection.getHeaderFields().containsKey(null)) {
-                String startLine = httpsURLConnection.getHeaderFields().get(null).get(0);
-                webResponse.setVersion(startLine.split(" ")[0]);
-            }
-            webResponse.setHeaders(httpsURLConnection.getHeaderFields().entrySet().stream()
-                    .filter(entry -> Objects.nonNull(entry.getKey()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0))));
-            if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
-                webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
-            }
-            byte[] body = IOUtils.toByteArray(httpsURLConnection.getInputStream());
-            if (body != null && hasBody(getMethod())) {
-                webResponse.setBody(body);
-                webResponse.setMimeType(httpsURLConnection.getContentType());
-                webResponse.setBodyEncoding(getEncoding(webResponse.getBody(), httpsURLConnection.getContentType()));
+            try (SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(getHost(), 443);
+                 InputStream inputStream = sslSocket.getInputStream();
+                 OutputStream outputStream = sslSocket.getOutputStream()) {
+                sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
+                sslSocket.setSoTimeout(timeoutForServer);
+                sslSocket.startHandshake();
+                outputStream.write(getAllRequestInBytes());
+                outputStream.flush();
+                webResponse.parseResponse(inputStream);
             }
         } else {
             webResponse.setStatusCode(HttpServletResponse.SC_OK);
@@ -253,71 +228,26 @@ public class WebRequest {
         return webResponse;
     }
 
-    private boolean hasBody(String method) {
-       //todo: реализовать
-    }
-
-    private String getCharsetFromContentType(String contentType) {
-        String[] values = contentType.split("; ");
-        for (String value : values) {
-            if (value.startsWith(CHARSET)) {
-                return value.split("=")[1];
-            }
-        }
-        return null;
-    }
-
-    private String getMimeTypeFromContentType(String contentType) {
-        String[] values = contentType.split("; ");
-        for (String value : values) {
-            if (!value.startsWith(CHARSET)) {
-                return value;
-            }
-        }
-        return null;
-    }
-
-    public String getEncoding(byte[] body, String contentType) {
-        if (contentType != null) {
-            String charset = getCharsetFromContentType(contentType);
-            if (charset != null) {
-                return charset;
-            }
-        }
-        if (TEXT_HTML.getMimeType().equals(contentType)) {
-            Elements charsetElements = Jsoup.parse(new String(body)).head().getElementsByAttribute(CHARSET);
-            if (!charsetElements.isEmpty()) {
-                return charsetElements.get(0).attr(CHARSET);
-            } else {
-                Elements httpEquivElements = Jsoup.parse(new String(body)).head().getElementsByAttribute(HTTP_EQUIV);
-                if (!httpEquivElements.isEmpty()) {
-                    String content = httpEquivElements.get(0).attr(CONTENT);
-                    String charset = getCharsetFromContentType(content);
-                    if (charset != null) {
-                        return charset;
-                    }
-                }
-            }
-        }
-        return UTF_8.toString();
-    }
-
-    private byte[] doChunk(byte[] body, String encoding) {
-        byte[] chunk = null;
+    @SuppressWarnings("Duplicates")
+    private byte[] getAllRequestInBytes() {
+        byte[] result = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            String hexLength = Integer.toHexString(body.length);
-            byteArrayOutputStream.write(hexLength.getBytes(encoding));
-            byteArrayOutputStream.write(CR_LF.getBytes(encoding));
-            byteArrayOutputStream.write(body);
-            byteArrayOutputStream.write(CR_LF.getBytes(encoding));
-            byteArrayOutputStream.write(Integer.toHexString(0).getBytes(encoding));
-            byteArrayOutputStream.write(CR_LF.getBytes(encoding));
+            AtomicReference<StringBuilder> stringBuffer = new AtomicReference<>(new StringBuilder());
+            stringBuffer.get().append(getMethod()).append(" ").append(getURI()).append(" ").append(getVersion()).append(CR_LF);
+            for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
+                stringBuffer.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
+            }
+            stringBuffer.get().append(CR_LF);
+            byteArrayOutputStream.write(stringBuffer.toString().getBytes(/*getEncoding()*/));
+            if (body != null) {
+                byteArrayOutputStream.write(body);
+            }
             byteArrayOutputStream.flush();
-            chunk = byteArrayOutputStream.toByteArray();
+            result = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return chunk;
+        return result;
     }
 
     public String getMethod() {

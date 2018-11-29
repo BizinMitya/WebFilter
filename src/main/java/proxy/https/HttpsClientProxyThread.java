@@ -35,13 +35,14 @@ public class HttpsClientProxyThread implements Runnable {
 
     @Override
     public void run() {
+        TlsServerProtocol tlsServerProtocol = null;
         try (InputStream socketInputStream = socket.getInputStream();
              OutputStream socketOutputStream = socket.getOutputStream()) {
-            WebRequest connectWebRequest = WebRequest.readWebRequest(socketInputStream);
+            WebRequest connectWebRequest = readWebRequest(socketInputStream);
             String host = connectWebRequest.getHost();
             if (connectWebRequest.isConnectMethod()) {
                 sendOkToConnect(socket);
-                TlsServerProtocol tlsServerProtocol = new TlsServerProtocol(socketInputStream,
+                tlsServerProtocol = new TlsServerProtocol(socketInputStream,
                         socketOutputStream, new SecureRandom());
                 tlsServerProtocol.accept(new FakeTlsServer(host));
                 try (InputStream tlsInputStream = tlsServerProtocol.getInputStream();
@@ -56,7 +57,9 @@ public class HttpsClientProxyThread implements Runnable {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
-                socket.close();
+                if (tlsServerProtocol != null) {
+                    tlsServerProtocol.close();
+                }
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
