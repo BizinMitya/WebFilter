@@ -134,7 +134,6 @@ public class WebResponse extends Web {
             setMimeType(getMimeTypeFromContentType(contentType));
             setBodyEncoding(getEncoding(body, contentType));
         }
-        //todo: парсить тело ответа в зависимости от способа кодирования!
         AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
         while (scanner.hasNext()) {
             stringBuilder.get().append(scanner.next());

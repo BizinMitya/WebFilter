@@ -22,8 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static dao.SettingsDAO.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
-import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.apache.http.HttpHeaders.*;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 
 public class WebRequest extends Web {
@@ -66,6 +65,7 @@ public class WebRequest extends Web {
             bufferedReader.read(body);
             webRequest.body = new String(body).getBytes(UTF_8);
         }
+        webRequest.headers.put(ACCEPT_ENCODING, IDENTITY.toString());
         return webRequest;
     }
 
