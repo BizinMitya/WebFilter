@@ -8,19 +8,18 @@ import org.jsoup.nodes.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.SocketException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.entity.ContentType.*;
-import static org.apache.lucene.util.IOUtils.UTF_8;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 import static util.FileUtil.getHostInBlacklistPage;
 
@@ -31,6 +30,9 @@ public class WebResponse extends Web {
     private String reasonPhrase;
     private String bodyEncoding;
     private String mimeType;
+    private byte[] body;
+    private Map<String, String> headers;
+    private String version;
 
     public WebResponse() {
         headers = new HashMap<>();
@@ -94,51 +96,6 @@ public class WebResponse extends Web {
 
     public void setBodyEncoding(String bodyEncoding) {
         this.bodyEncoding = bodyEncoding;
-    }
-
-    private void parseStartLine(String startLine) {
-        String[] startLineParameters = startLine.split(" ");
-        version = startLineParameters[0];
-        statusCode = Integer.parseInt(startLineParameters[1]);
-        reasonPhrase = startLineParameters[2];
-    }
-
-    private void parseHeader(String header) {
-        int idx = header.indexOf(":");
-        if (idx == -1) {
-            LOGGER.error("Некорректный параметр заголовка: " + header);
-        }
-        headers.put(header.substring(0, idx), header.substring(idx + 2));
-    }
-
-    void parseResponse(InputStream inputStream) throws IOException {
-        Scanner scanner = new Scanner(inputStream, UTF_8).useDelimiter(CR_LF);
-        String startLine = scanner.next();
-        if (startLine == null) {
-            throw new SocketException();
-        }
-        parseStartLine(startLine);
-        while (scanner.hasNext()) {
-            String header = scanner.next();
-            if (header.isEmpty()) {
-                break;
-            } else {
-                parseHeader(header);
-            }
-        }
-        if (getHeaders().containsKey(TRANSFER_ENCODING)) {
-            getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
-        }
-        if (headers.containsKey(CONTENT_TYPE)) {
-            String contentType = headers.get(CONTENT_TYPE);
-            setMimeType(getMimeTypeFromContentType(contentType));
-            setBodyEncoding(getEncoding(body, contentType));
-        }
-        AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
-        while (scanner.hasNext()) {
-            stringBuilder.get().append(scanner.next());
-        }
-        body = stringBuilder.get().toString().getBytes();
     }
 
     @SuppressWarnings("Duplicates")

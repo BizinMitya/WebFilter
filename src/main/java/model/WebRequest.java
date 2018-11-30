@@ -15,9 +15,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.SocketException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static dao.SettingsDAO.*;
@@ -40,39 +40,47 @@ public class WebRequest extends Web {
     private int timeoutForServer;// таймаут на чтение данных от сервера
     private String method;
     private String URI;
+    private byte[] body;
+    private Map<String, String> headers;
+    private String version;
 
     public WebRequest() {
         headers = new HashMap<>();
         setSettings();
     }
 
-    public static WebRequest readWebRequest(InputStream inputStream) throws IOException {
+    @Nullable
+    public static WebRequest readWebRequest(InputStream inputStream) {
         WebRequest webRequest = new WebRequest();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String startLine = bufferedReader.readLine();
-        if (startLine == null) {
-            throw new SocketException();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String startLine = bufferedReader.readLine();
+            if (startLine == null) {
+                throw new SocketException();
+            }
+            parseStartLine(webRequest, startLine);
+            String header = bufferedReader.readLine();
+            while (header != null && header.length() > 0) {
+                parseHeader(webRequest, header);
+                header = bufferedReader.readLine();
+            }
+            if (webRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
+                int contentLength = Integer.parseInt(webRequest.getHeaders().get(CONTENT_LENGTH));
+                char[] body = new char[contentLength];
+                bufferedReader.read(body);
+                webRequest.body = new String(body).getBytes(UTF_8);
+            }
+            webRequest.headers.put(ACCEPT_ENCODING, IDENTITY.toString());
+            return webRequest;
+        } catch (Exception e) {
+            return null;
         }
-        parseStartLine(webRequest, startLine);
-        String header = bufferedReader.readLine();
-        while (header != null && header.length() > 0) {
-            parseHeader(webRequest, header);
-            header = bufferedReader.readLine();
-        }
-        if (webRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
-            int contentLength = Integer.parseInt(webRequest.getHeaders().get(CONTENT_LENGTH));
-            char[] body = new char[contentLength];
-            bufferedReader.read(body);
-            webRequest.body = new String(body).getBytes(UTF_8);
-        }
-        webRequest.headers.put(ACCEPT_ENCODING, IDENTITY.toString());
-        return webRequest;
     }
 
     private static void parseStartLine(WebRequest webRequest, String startLine) throws UnsupportedEncodingException {
         String[] startLineParameters = startLine.split(" ");
         webRequest.method = startLineParameters[0];
-        webRequest.URI = URLDecoder.decode(startLineParameters[1], UTF_8.toString());
+        webRequest.URI = startLineParameters[1];
         webRequest.version = startLineParameters[2];
     }
 
@@ -206,8 +214,8 @@ public class WebRequest extends Web {
         return webResponse;
     }
 
+    @Nullable
     public WebResponse doHttpsRequest() throws IOException {
-        WebResponse webResponse = new WebResponse();
         if (!method.equals(CONNECT)) {
             SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
             try (SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(getHost(), 443);
@@ -218,14 +226,67 @@ public class WebRequest extends Web {
                 sslSocket.startHandshake();
                 outputStream.write(getAllRequestInBytes());
                 outputStream.flush();
-                webResponse.parseResponse(inputStream);
+                return readWebResponse(inputStream);
             }
         } else {
+            WebResponse webResponse = new WebResponse();
             webResponse.setStatusCode(HttpServletResponse.SC_OK);
             webResponse.setReasonPhrase("OK");
             webResponse.setVersion("HTTP/1.1");
+            return webResponse;
         }
-        return webResponse;
+    }
+
+    private void parseStartLine(WebResponse webResponse, String startLine) {
+        String[] startLineParameters = startLine.split(" ");
+        webResponse.setVersion(startLineParameters[0]);
+        webResponse.setStatusCode(Integer.parseInt(startLineParameters[1]));
+        webResponse.setReasonPhrase(startLineParameters[2]);
+    }
+
+    private void parseHeader(WebResponse webResponse, String header) {
+        int idx = header.indexOf(":");
+        if (idx == -1) {
+            LOGGER.error("Некорректный параметр заголовка: " + header);
+        }
+        webResponse.getHeaders().put(header.substring(0, idx), header.substring(idx + 2));
+    }
+
+    @Nullable
+    private WebResponse readWebResponse(InputStream inputStream) {
+        try {
+            WebResponse webResponse = new WebResponse();
+            Scanner scanner = new Scanner(inputStream, UTF_8.toString()).useDelimiter(CR_LF);
+            String startLine = scanner.next();
+            if (startLine == null) {
+                throw new SocketException();
+            }
+            parseStartLine(webResponse, startLine);
+            while (scanner.hasNext()) {
+                String header = scanner.next();
+                if (header.isEmpty()) {
+                    break;
+                } else {
+                    parseHeader(webResponse, header);
+                }
+            }
+            if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
+                webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+            }
+            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
+            while (scanner.hasNext()) {
+                stringBuilder.get().append(scanner.next());
+            }
+            webResponse.setBody(stringBuilder.get().toString().getBytes());
+            if (webResponse.getHeaders().containsKey(CONTENT_TYPE)) {
+                String contentType = webResponse.getHeaders().get(CONTENT_TYPE);
+                webResponse.setMimeType(getMimeTypeFromContentType(contentType));
+                webResponse.setBodyEncoding(getEncoding(webResponse.getBody(), contentType));
+            }
+            return webResponse;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @SuppressWarnings("Duplicates")

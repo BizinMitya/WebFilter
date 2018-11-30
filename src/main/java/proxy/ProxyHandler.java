@@ -5,6 +5,7 @@ import model.Host;
 import model.WebRequest;
 import model.WebResponse;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import util.HostUtil;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public abstract class ProxyHandler {
         }
     }
 
+    @Nullable
     public static WebResponse doHttpsRequestToServer(WebRequest webRequest) throws IOException {
         Host host = HostUtil.createHostFromHostOrIp(webRequest.getHost());
         if (isHostInBlacklist(host)) {

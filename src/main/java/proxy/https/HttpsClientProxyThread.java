@@ -39,20 +39,24 @@ public class HttpsClientProxyThread implements Runnable {
         try (InputStream socketInputStream = socket.getInputStream();
              OutputStream socketOutputStream = socket.getOutputStream()) {
             WebRequest connectWebRequest = readWebRequest(socketInputStream);
-            String host = connectWebRequest.getHost();
-            //todo: вынести сюда проверку черного списка
-            // почему при каждом удаллении элемента черного списка прокси-серверы перезагружаются?! Убрать это
-            if (connectWebRequest.isConnectMethod()) {
-                sendOkToConnect(socket);
-                tlsServerProtocol = new TlsServerProtocol(socketInputStream,
-                        socketOutputStream, new SecureRandom());
-                tlsServerProtocol.accept(new FakeTlsServer(host));
-                try (InputStream tlsInputStream = tlsServerProtocol.getInputStream();
-                     OutputStream tlsOutputStream = tlsServerProtocol.getOutputStream()) {
-                    WebRequest webRequestFromClient = readWebRequest(tlsInputStream);// парсинг https-запроса от браузера
-                    WebResponse webResponseFromServer = ProxyHandler.doHttpsRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
-                    WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
-                    tlsOutputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+            if (connectWebRequest != null) {
+                String host = connectWebRequest.getHost();
+                if (connectWebRequest.isConnectMethod()) {
+                    sendOkToConnect(socket);
+                    tlsServerProtocol = new TlsServerProtocol(socketInputStream,
+                            socketOutputStream, new SecureRandom());
+                    tlsServerProtocol.accept(new FakeTlsServer(host));
+                    try (InputStream tlsInputStream = tlsServerProtocol.getInputStream();
+                         OutputStream tlsOutputStream = tlsServerProtocol.getOutputStream()) {
+                        WebRequest webRequestFromClient = readWebRequest(tlsInputStream);// парсинг https-запроса от браузера
+                        if (webRequestFromClient != null) {
+                            WebResponse webResponseFromServer = ProxyHandler.doHttpsRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
+                            if (webResponseFromServer != null) {
+                                WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
+                                tlsOutputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+                            }
+                        }
+                    }
                 }
             }
         } catch (IOException e) {

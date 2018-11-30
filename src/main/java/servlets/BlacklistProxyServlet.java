@@ -3,7 +3,6 @@ package servlets;
 import model.Host;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import proxy.Proxy;
 import util.HostUtil;
 
 import javax.servlet.http.HttpServlet;
@@ -22,7 +21,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class BlacklistProxyServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(BlacklistProxyServlet.class);
-    private Proxy proxy = Proxy.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
@@ -47,12 +45,6 @@ public class BlacklistProxyServlet extends HttpServlet {
                 Host host = HostUtil.createHostFromHostOrIp(hostOrIp);
                 addHostInBlacklist(host);
                 LOGGER.info(String.format("Хост %s добавлен в чёрный список!", hostOrIp));
-                if (proxy.isRunningHttp()) {
-                    proxy.restartHttp();
-                }
-                if (proxy.isRunningHttps()) {
-                    proxy.restartHttps();
-                }
             }
         } catch (UnknownHostException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -73,12 +65,6 @@ public class BlacklistProxyServlet extends HttpServlet {
                 Host host = HostUtil.createHostFromHostOrIp(ip);
                 removeHost(host);
                 LOGGER.info(String.format("Хост %s удалён из чёрного списка!", ip));
-                if (proxy.isRunningHttp()) {
-                    proxy.restartHttp();
-                }
-                if (proxy.isRunningHttps()) {
-                    proxy.restartHttps();
-                }
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }

@@ -42,9 +42,11 @@ public class HttpClientProxyThread implements Runnable {
         try (InputStream inputStream = socket.getInputStream();
              OutputStream outputStream = socket.getOutputStream()) {
             WebRequest webRequestFromClient = readWebRequest(inputStream);// парсинг http-запроса от браузера
-            WebResponse webResponseFromServer = ProxyHandler.doHttpRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
-            WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
-            outputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+            if (webRequestFromClient != null) {
+                WebResponse webResponseFromServer = ProxyHandler.doHttpRequestToServer(webRequestFromClient);// отправка запроса на сервер (предварительная обработка) и получение ответа от него
+                WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
+                outputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+            }
         } catch (IOException e) {
             if (!(e instanceof SocketException) && !(e instanceof SocketTimeoutException)) {
                 LOGGER.error(e.getMessage(), e);

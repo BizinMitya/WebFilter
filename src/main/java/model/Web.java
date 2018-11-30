@@ -3,8 +3,6 @@ package model;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
-import java.util.Map;
-
 import static org.apache.http.entity.ContentType.TEXT_HTML;
 import static org.apache.lucene.util.IOUtils.UTF_8;
 
@@ -14,9 +12,6 @@ public abstract class Web {
     static final String CR_LF = "\r\n";
     private static final String CHARSET = "charset";
     private static final String HTTP_EQUIV = "http-equiv";
-    protected byte[] body;
-    protected Map<String, String> headers;
-    protected String version;
 
     private String getCharsetFromContentType(String contentType) {
         String[] values = contentType.split("; ");
