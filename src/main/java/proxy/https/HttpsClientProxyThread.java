@@ -40,6 +40,8 @@ public class HttpsClientProxyThread implements Runnable {
              OutputStream socketOutputStream = socket.getOutputStream()) {
             WebRequest connectWebRequest = readWebRequest(socketInputStream);
             String host = connectWebRequest.getHost();
+            //todo: вынести сюда проверку черного списка
+            // почему при каждом удаллении элемента черного списка прокси-серверы перезагружаются?! Убрать это
             if (connectWebRequest.isConnectMethod()) {
                 sendOkToConnect(socket);
                 tlsServerProtocol = new TlsServerProtocol(socketInputStream,
