@@ -1,6 +1,5 @@
 package proxy;
 
-import classificators.Category;
 import model.Host;
 import model.WebRequest;
 import model.WebResponse;
@@ -42,7 +41,7 @@ public abstract class ProxyHandler {
     public static WebResponse fromServer(WebResponse webResponse) {
         if (webResponse.getBody() != null && webResponse.isHtml()) {
             try {
-                Map<Category, Double> categoryProbabilityMap = webResponse.classifyContent();
+                Map<String, Double> categoryProbabilityMap = webResponse.classifyContent();
                 webResponse.createCategoriesInfoScript(categoryProbabilityMap);
             } catch (UnsupportedEncodingException e) {
                 LOGGER.error(e.getMessage(), e);

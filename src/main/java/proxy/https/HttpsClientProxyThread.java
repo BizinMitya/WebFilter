@@ -54,11 +54,16 @@ public class HttpsClientProxyThread implements Runnable {
                             if (webResponseFromServer != null) {
                                 WebResponse webResponseToClient = ProxyHandler.fromServer(webResponseFromServer);// обработка ответа от сервера
                                 tlsOutputStream.write(webResponseToClient.getAllResponseInBytes());// отправка запроса обратно браузеру
+                                tlsOutputStream.flush();
                             }
                         }
+                    } catch (SocketException ignored) {
+                    } catch (IOException e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }
+        } catch (SocketException ignored) {
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

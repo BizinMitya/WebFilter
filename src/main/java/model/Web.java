@@ -1,19 +1,12 @@
 package model;
 
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
-
-import static org.apache.http.entity.ContentType.TEXT_HTML;
-import static org.apache.lucene.util.IOUtils.UTF_8;
-
 public abstract class Web {
 
     protected static final String CONTENT = "content";
-    static final String CR_LF = "\r\n";
     private static final String CHARSET = "charset";
     private static final String HTTP_EQUIV = "http-equiv";
 
-    private String getCharsetFromContentType(String contentType) {
+    String getCharsetFromContentType(String contentType) {
         String[] values = contentType.split("; ");
         for (String value : values) {
             if (value.startsWith(CHARSET)) {
@@ -33,7 +26,7 @@ public abstract class Web {
         return null;
     }
 
-    String getEncoding(byte[] body, String contentType) {
+   /* String getEncoding(byte[] body, String contentType) {
         if (contentType != null) {
             String charset = getCharsetFromContentType(contentType);
             if (charset != null) {
@@ -56,6 +49,6 @@ public abstract class Web {
             }
         }
         return UTF_8;
-    }
+    }*/
 
 }

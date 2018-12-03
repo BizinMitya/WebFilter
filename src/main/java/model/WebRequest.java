@@ -15,15 +15,17 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.SocketException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static dao.SettingsDAO.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.HttpHeaders.*;
+import static org.apache.lucene.util.IOUtils.UTF_8;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
+import static org.json.HTTP.CRLF;
 
 public class WebRequest extends Web {
 
@@ -67,8 +69,9 @@ public class WebRequest extends Web {
             if (webRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
                 int contentLength = Integer.parseInt(webRequest.getHeaders().get(CONTENT_LENGTH));
                 char[] body = new char[contentLength];
+                //todo: проверить запросы с телом
                 bufferedReader.read(body);
-                webRequest.body = new String(body).getBytes(UTF_8);
+                webRequest.body = new String(body).getBytes();
             }
             webRequest.headers.put(ACCEPT_ENCODING, IDENTITY.toString());
             return webRequest;
@@ -77,7 +80,7 @@ public class WebRequest extends Web {
         }
     }
 
-    private static void parseStartLine(WebRequest webRequest, String startLine) throws UnsupportedEncodingException {
+    private static void parseStartLine(WebRequest webRequest, String startLine) {
         String[] startLineParameters = startLine.split(" ");
         webRequest.method = startLineParameters[0];
         webRequest.URI = startLineParameters[1];
@@ -198,10 +201,11 @@ public class WebRequest extends Web {
                         if (contentTypeHeader != null) {
                             String contentType = contentTypeHeader.getValue();
                             webResponse.setMimeType(getMimeTypeFromContentType(contentType));
-                            webResponse.setBodyEncoding(getEncoding(body, contentType));
+                            webResponse.setBodyEncoding(getCharsetFromContentType(contentType));
                         }
                         if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
                             webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+                            webResponse.getHeaders().put(CONTENT_LENGTH, String.valueOf(body.length));
                         }
                     }
                 }
@@ -226,7 +230,7 @@ public class WebRequest extends Web {
                 sslSocket.startHandshake();
                 outputStream.write(getAllRequestInBytes());
                 outputStream.flush();
-                return readWebResponse(inputStream);
+                return readHttpsResponse(inputStream);
             }
         } else {
             WebResponse webResponse = new WebResponse();
@@ -253,10 +257,10 @@ public class WebRequest extends Web {
     }
 
     @Nullable
-    private WebResponse readWebResponse(InputStream inputStream) {
+    private WebResponse readHttpsResponse(InputStream inputStream) {
         try {
             WebResponse webResponse = new WebResponse();
-            Scanner scanner = new Scanner(inputStream, UTF_8.toString()).useDelimiter(CR_LF);
+            Scanner scanner = new Scanner(inputStream, UTF_8).useDelimiter(CRLF);
             String startLine = scanner.next();
             if (startLine == null) {
                 throw new SocketException();
@@ -270,18 +274,22 @@ public class WebRequest extends Web {
                     parseHeader(webResponse, header);
                 }
             }
-            if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
-                webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
-            }
-            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
-            while (scanner.hasNext()) {
-                stringBuilder.get().append(scanner.next());
-            }
-            webResponse.setBody(stringBuilder.get().toString().getBytes());
             if (webResponse.getHeaders().containsKey(CONTENT_TYPE)) {
                 String contentType = webResponse.getHeaders().get(CONTENT_TYPE);
                 webResponse.setMimeType(getMimeTypeFromContentType(contentType));
-                webResponse.setBodyEncoding(getEncoding(webResponse.getBody(), contentType));
+                webResponse.setBodyEncoding(getCharsetFromContentType(contentType));
+            }
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                String bodyEncoding = webResponse.getBodyEncoding() != null ? webResponse.getBodyEncoding() : UTF_8;
+                while (scanner.hasNext()) {
+                    //todo чтение в неправильной кодировке!
+                    byteArrayOutputStream.write(Charset.forName(bodyEncoding).encode(scanner.next()).array());
+                }
+                webResponse.setBody(byteArrayOutputStream.toByteArray());
+                if (webResponse.getHeaders().containsKey(TRANSFER_ENCODING)) {
+                    webResponse.getHeaders().replace(TRANSFER_ENCODING, IDENTITY.toString());
+                    webResponse.getHeaders().put(CONTENT_LENGTH, String.valueOf(webResponse.getBody().length));
+                }
             }
             return webResponse;
         } catch (Exception e) {
@@ -293,13 +301,13 @@ public class WebRequest extends Web {
     private byte[] getAllRequestInBytes() {
         byte[] result = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            AtomicReference<StringBuilder> stringBuffer = new AtomicReference<>(new StringBuilder());
-            stringBuffer.get().append(getMethod()).append(" ").append(getURI()).append(" ").append(getVersion()).append(CR_LF);
+            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
+            stringBuilder.get().append(getMethod()).append(" ").append(getURI()).append(" ").append(getVersion()).append(CRLF);
             for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
-                stringBuffer.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
+                stringBuilder.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CRLF);
             }
-            stringBuffer.get().append(CR_LF);
-            byteArrayOutputStream.write(stringBuffer.toString().getBytes(/*getEncoding()*/));
+            stringBuilder.get().append(CRLF);
+            byteArrayOutputStream.write(stringBuilder.toString().getBytes());
             if (body != null) {
                 byteArrayOutputStream.write(body);
             }

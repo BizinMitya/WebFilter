@@ -1,6 +1,5 @@
 package model;
 
-import classificators.Category;
 import classificators.bayes.BayesClassifier;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -20,7 +19,9 @@ import java.util.regex.Pattern;
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.entity.ContentType.*;
+import static org.apache.lucene.util.IOUtils.UTF_8;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
+import static org.json.HTTP.CRLF;
 import static util.FileUtil.getHostInBlacklistPage;
 
 public class WebResponse extends Web {
@@ -56,9 +57,9 @@ public class WebResponse extends Web {
                 TEXT_PLAIN.getMimeType().equals(mimeType) ||
                 APPLICATION_JSON.getMimeType().equals(mimeType) ||
                 APPLICATION_XML.getMimeType().equals(mimeType)) {
-            String bodyString = new String(body, bodyEncoding);
+            String bodyString = new String(body, getBodyEncoding());
             bodyString = bodyString.replace(target, replacement);
-            this.body = bodyString.getBytes(bodyEncoding);
+            this.body = bodyString.getBytes(getBodyEncoding());
         }
     }
 
@@ -66,8 +67,8 @@ public class WebResponse extends Web {
         return TEXT_HTML.getMimeType().equals(mimeType);
     }
 
-    public Map<Category, Double> classifyContent() throws UnsupportedEncodingException {
-        String bodyString = new String(body, bodyEncoding);
+    public Map<String, Double> classifyContent() throws UnsupportedEncodingException {
+        String bodyString = new String(body, getBodyEncoding());
         Pattern pattern = Pattern.compile("[а-яА-Я]+");
         Matcher matcher = pattern.matcher(Jsoup.parse(bodyString).text());
         List<String> words = new ArrayList<>();
@@ -77,21 +78,21 @@ public class WebResponse extends Web {
         return BayesClassifier.classify(words);
     }
 
-    public void createCategoriesInfoScript(Map<Category, Double> categoryProbabilityMap) throws UnsupportedEncodingException {
-        String bodyString = new String(body, bodyEncoding);
-        AtomicReference<StringBuffer> infoScript = new AtomicReference<>(new StringBuffer());
+    public void createCategoriesInfoScript(Map<String, Double> categoryProbabilityMap) throws UnsupportedEncodingException {
+        String bodyString = new String(body, getBodyEncoding());
+        AtomicReference<StringBuilder> infoScript = new AtomicReference<>(new StringBuilder());
         infoScript.get().append("<script>").append("alert('");
-        for (Map.Entry<Category, Double> entry : categoryProbabilityMap.entrySet()) {
+        for (Map.Entry<String, Double> entry : categoryProbabilityMap.entrySet()) {
             infoScript.get().append(entry.getKey()).append(": ").append(String.format("%.4f", entry.getValue())).append("; ");
         }
         infoScript.get().append("')").append("</script>");
         Document html = Jsoup.parse(bodyString);
         html.head().append(infoScript.toString());
-        this.body = html.toString().getBytes(bodyEncoding);
+        this.body = html.toString().getBytes(getBodyEncoding());
     }
 
     public String getBodyEncoding() {
-        return bodyEncoding;
+        return bodyEncoding != null ? bodyEncoding : UTF_8;
     }
 
     public void setBodyEncoding(String bodyEncoding) {
@@ -102,13 +103,13 @@ public class WebResponse extends Web {
     public byte[] getAllResponseInBytes() {
         byte[] result = null;
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            AtomicReference<StringBuilder> stringBuffer = new AtomicReference<>(new StringBuilder());
-            stringBuffer.get().append(getVersion()).append(" ").append(getStatusCode()).append(" ").append(getReasonPhrase()).append(CR_LF);
+            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
+            stringBuilder.get().append(getVersion()).append(" ").append(getStatusCode()).append(" ").append(getReasonPhrase()).append(CRLF);
             for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
-                stringBuffer.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CR_LF);
+                stringBuilder.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CRLF);
             }
-            stringBuffer.get().append(CR_LF);
-            byteArrayOutputStream.write(stringBuffer.toString().getBytes(/*getEncoding()*/));
+            stringBuilder.get().append(CRLF);
+            byteArrayOutputStream.write(stringBuilder.toString().getBytes());
             if (body != null) {
                 byteArrayOutputStream.write(body);
             }

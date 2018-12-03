@@ -1,4 +1,3 @@
-import classificators.Category;
 import classificators.bayes.BayesClassifier;
 import org.apache.log4j.Logger;
 
@@ -19,11 +18,10 @@ public class Test {
         keywords.add("я");
         keywords.add("нормально");
         keywords.add("пока");
-        Map<Category, Double> map = BayesClassifier.classify(keywords);
-        for (Map.Entry<Category, Double> entry : map.entrySet()) {
+        Map<String, Double> map = BayesClassifier.classify(keywords);
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
             LOGGER.info(entry.getKey() + " -> " + entry.getValue());
         }
-
     }
 
 }

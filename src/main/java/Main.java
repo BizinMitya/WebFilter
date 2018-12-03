@@ -55,7 +55,6 @@ public class Main {
         servletHandler.addServletWithMapping(StatusProxyServlet.class, "/proxy/status");
         servletHandler.addServletWithMapping(SettingsProxyServlet.class, "/proxy/settings");
         servletHandler.addServletWithMapping(BlacklistProxyServlet.class, "/proxy/blacklist");
-        servletHandler.addServletWithMapping(MonitoringServlet.class, "/proxy/monitoring");
         servletHandler.addServletWithMapping(DownloadRootCertificateServlet.class, "/proxy/downloadRootCertificate");
     }
 

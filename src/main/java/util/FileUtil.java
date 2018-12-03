@@ -1,11 +1,11 @@
 package util;
 
-import classificators.Category;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.tartarus.snowball.ext.RussianStemmer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -16,23 +16,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static classificators.Category.*;
+import java.util.stream.Stream;
 
 public abstract class FileUtil {
 
     private static final String PATH_TO_HOST_IN_BLACKLIST_PAGE = "/web/html/hostInBlacklist.html";
     private static final Logger LOGGER = Logger.getLogger(FileUtil.class);
     private static final String PATH_TO_LEARN_DIR = "learn/";
-    private static final Map<Category, String> pathsToLearnFiles;
+    private static final Map<String, String> pathsToLearnFiles;
 
     static {
         pathsToLearnFiles = new HashMap<>();
-        pathsToLearnFiles.put(ADVERTISING, PATH_TO_LEARN_DIR + "advertising.txt");
-        pathsToLearnFiles.put(DRUGS, PATH_TO_LEARN_DIR + "drugs.txt");
-        pathsToLearnFiles.put(GAMES, PATH_TO_LEARN_DIR + "games.txt");
-        pathsToLearnFiles.put(VIOLENCE, PATH_TO_LEARN_DIR + "violence.txt");
-        pathsToLearnFiles.put(WEAPON, PATH_TO_LEARN_DIR + "weapon.txt");
+        File learnDir = new File(PATH_TO_LEARN_DIR);
+        String[] fileNames = learnDir.list((folder, name) -> name.endsWith(".txt"));
+        if (fileNames != null) {
+            Stream.of(fileNames)
+                    .distinct()
+                    .map(s -> s.substring(0, s.lastIndexOf('.')))
+                    .forEach(s -> pathsToLearnFiles.put(s, PATH_TO_LEARN_DIR + s + ".txt"));
+        }
     }
 
     @Nullable
@@ -52,7 +54,7 @@ public abstract class FileUtil {
     private static void prepareLearnKeywords() {
         try {
             RussianStemmer russianStemmer = new RussianStemmer();
-            for (Map.Entry<Category, String> entry : pathsToLearnFiles.entrySet()) {
+            for (Map.Entry<String, String> entry : pathsToLearnFiles.entrySet()) {
                 Path path = Paths.get(entry.getValue());
                 List<String> lines = Files.readAllLines(path);
                 for (int i = 0; i < lines.size(); i++) {
@@ -72,11 +74,11 @@ public abstract class FileUtil {
      *
      * @return карта категория -> набор ключевых слов (документ) этой категории
      */
-    public static Map<Category, List<String>> getLearnKeywordsFromFiles() {
+    public static Map<String, List<String>> getLearnKeywordsFromFiles() {
         prepareLearnKeywords();
-        Map<Category, List<String>> result = new HashMap<>();
+        Map<String, List<String>> result = new HashMap<>();
         try {
-            for (Map.Entry<Category, String> entry : pathsToLearnFiles.entrySet()) {
+            for (Map.Entry<String, String> entry : pathsToLearnFiles.entrySet()) {
                 result.put(entry.getKey(),
                         Files.lines(Paths.get(entry.getValue())).collect(Collectors.toList()));
             }

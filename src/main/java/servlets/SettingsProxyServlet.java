@@ -22,6 +22,7 @@ public class SettingsProxyServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(SettingsProxyServlet.class);
     private Proxy proxy = Proxy.getInstance();
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try (Writer writer = response.getWriter()) {
             Map<String, String> settings = getAllSettings();
@@ -33,6 +34,7 @@ public class SettingsProxyServlet extends HttpServlet {
         }
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());

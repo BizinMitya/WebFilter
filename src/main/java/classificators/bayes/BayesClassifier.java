@@ -1,49 +1,38 @@
 package classificators.bayes;
 
-import classificators.Category;
 import org.apache.log4j.Logger;
 import org.tartarus.snowball.ext.RussianStemmer;
 import util.FileUtil;
 
 import java.util.*;
 
-import static classificators.Category.*;
-
 public abstract class BayesClassifier {
 
     private static final Logger LOGGER = Logger.getLogger(BayesClassifier.class);
-
-    private static final Category[] CATEGORIES = {
-            ADVERTISING,
-            DRUGS,
-            GAMES,
-            VIOLENCE,
-            WEAPON
-    };
 
     /**
      * Карта категория -> (карта ключевое слово -> принадлежность ключевого слова этой категории).
      * Во второй карте присутствуют ВСЕ ключевые слова из всех категорий.
      */
-    private static final Map<Category, Map<String, Boolean>> categoryToContainsKeywordsMap = new HashMap<>();
+    private static final Map<String, Map<String, Boolean>> categoryToContainsKeywordsMap = new HashMap<>();
 
     /**
      * Карта категория -> вероятность этой категории (Dc/D)
      */
-    private static final Map<Category, Double> categoryProbabilityMap = new HashMap<>();
+    private static final Map<String, Double> categoryProbabilityMap = new HashMap<>();
 
     /**
      * Карта категория -> количество ключевых слов в этой категории
      */
-    private static final Map<Category, Integer> categoryCountKeywordsMap = new HashMap<>();
+    private static final Map<String, Integer> categoryCountKeywordsMap = new HashMap<>();
 
     /**
      * Метод для обучения (тренировки) классификатора на основе заготовленных наборов слов (документов)
      */
     public static void learn() {
         LOGGER.info("Начало обучения классификатора");
-        Map<Category, List<String>> categoryToKeywordsMap = FileUtil.getLearnKeywordsFromFiles();
-        for (Map.Entry<Category, List<String>> entry : categoryToKeywordsMap.entrySet()) {
+        Map<String, List<String>> categoryToKeywordsMap = FileUtil.getLearnKeywordsFromFiles();
+        for (Map.Entry<String, List<String>> entry : categoryToKeywordsMap.entrySet()) {
             List<String> keywords = entry.getValue();
             for (int i = 0; i < keywords.size(); i++) {
                 keywords.set(i, keywords.get(i).toLowerCase());
@@ -53,8 +42,9 @@ public abstract class BayesClassifier {
         for (List<String> keywords : categoryToKeywordsMap.values()) {
             allKeywords.addAll(keywords);
         }
-        for (Category category : CATEGORIES) {
-            List<String> keywordsForCategory = categoryToKeywordsMap.get(category);
+        for (Map.Entry<String, List<String>> entry : categoryToKeywordsMap.entrySet()) {
+            String category = entry.getKey();
+            List<String> keywordsForCategory = entry.getValue();
             categoryCountKeywordsMap.put(category, keywordsForCategory.size());
             categoryProbabilityMap.put(category, (double) keywordsForCategory.size() / allKeywords.size());
             Map<String, Boolean> keywordsContainsMap = new HashMap<>();
@@ -72,7 +62,7 @@ public abstract class BayesClassifier {
      * @param words набор слов (документ)
      * @return карта категория -> вероятность попадания набора слов (документа) в эту категорию
      */
-    public static Map<Category, Double> classify(List<String> words) {
+    public static Map<String, Double> classify(List<String> words) {
         words.removeIf(s -> s.length() < 4);
         RussianStemmer russianStemmer = new RussianStemmer();
         for (int i = 0; i < words.size(); i++) {
@@ -80,9 +70,10 @@ public abstract class BayesClassifier {
             russianStemmer.stem();
             words.set(i, russianStemmer.getCurrent());
         }
-        Map<Category, Double> categoryProbabilityMap = new HashMap<>();
-        for (Category category : CATEGORIES) {
-            Map<String, Boolean> keywordsMap = categoryToContainsKeywordsMap.get(category);// V, все ключевые слова
+        Map<String, Double> categoryProbabilityMap = new HashMap<>();
+        for (Map.Entry<String, Map<String, Boolean>> entry : categoryToContainsKeywordsMap.entrySet()) {
+            Map<String, Boolean> keywordsMap = entry.getValue();// V, все ключевые слова
+            String category = entry.getKey();
             double d = Math.log(BayesClassifier.categoryProbabilityMap.get(category));// log(Dc/D)
             double sum = 0d;// сумма логарифмов
             for (String word : words) {
@@ -96,10 +87,10 @@ public abstract class BayesClassifier {
             double resultForCategory = d + sum;// значение логарифма для категории
             categoryProbabilityMap.put(category, resultForCategory);
         }
-        Map<Category, Double> copy = new HashMap<>(categoryProbabilityMap);
-        for (Map.Entry<Category, Double> entry : categoryProbabilityMap.entrySet()) {
+        Map<String, Double> copy = new HashMap<>(categoryProbabilityMap);
+        for (Map.Entry<String, Double> entry : categoryProbabilityMap.entrySet()) {
             double s = 0d;
-            for (Category category : CATEGORIES) {
+            for (String category : categoryToContainsKeywordsMap.keySet()) {
                 if (!entry.getKey().equals(category)) {
                     s += Math.exp(copy.get(category) - entry.getValue());
                 }

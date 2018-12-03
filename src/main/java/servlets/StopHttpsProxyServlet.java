@@ -15,5 +15,4 @@ public class StopHttpsProxyServlet extends HttpServlet {
         proxy.stopHttps();
     }
 
-
 }
