@@ -35,7 +35,7 @@ public class SettingsProxyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
             JSONObject settingsJson = new JSONObject(reader.lines().collect(Collectors.joining(System.lineSeparator())));

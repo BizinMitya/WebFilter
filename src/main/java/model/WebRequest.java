@@ -68,7 +68,7 @@ public class WebRequest extends Web {
             }
             if (webRequest.getHeaders().containsKey(CONTENT_LENGTH)) {
                 int contentLength = Integer.parseInt(webRequest.getHeaders().get(CONTENT_LENGTH));
-                char[] body = new char[contentLength];
+                char[] body = new char[contentLength];//todo: длина в байтах же!
                 //todo: проверить запросы с телом
                 bufferedReader.read(body);
                 webRequest.body = new String(body).getBytes();

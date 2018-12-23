@@ -29,7 +29,7 @@ function loadSettings() {
 function saveSettings() {
     $.ajax({
         url: "/proxy/settings",
-        method: "POST",
+        method: "PUT",
         contentType: "application/json; charset=UTF-8",
         data: getJSONSettings(),
         success: function () {

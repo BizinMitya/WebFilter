@@ -1,6 +1,6 @@
 $(document).ready(function () {
     checkProxyServer();
-    setInterval("checkProxyServer()", 2000);
+    setInterval("checkProxyServer()", 1000);
 });
 
 function checkProxyServer() {
