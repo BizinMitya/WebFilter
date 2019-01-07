@@ -43,20 +43,29 @@
             let td;
             while ((td = document.getElementById('td' + counter)) !== null) {
                 probabilities.push({
-                    i: counter,
-                    td: Number.parseFloat(td.innerHTML)
+                    index: counter,
+                    probability: Number.parseFloat(td.innerHTML)
                 });
                 counter++;
             }
-            let max = probabilities[0];
+            let maxProbability = probabilities[0].probability;
             for (let i = 0; i < probabilities.length; i++) {
                 let obj = probabilities[i];
-                if (obj.td > max.td) {
-                    max = obj;
+                if (obj.probability > maxProbability) {
+                    maxProbability = obj.probability;
                 }
             }
-            let maxTr = document.getElementById('tr' + max.i);
-            maxTr.className = 'mark';
+            let indices = [];
+            for (let i = 0; i < probabilities.length; i++) {
+                let obj = probabilities[i];
+                if (obj.probability === maxProbability) {
+                    indices.push(obj.index);
+                }
+            }
+            indices.forEach(function (index) {
+                let maxTr = document.getElementById('tr' + index);
+                maxTr.className = 'mark';
+            });
         }
     </script>
 </head>
