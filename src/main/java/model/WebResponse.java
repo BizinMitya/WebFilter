@@ -1,24 +1,25 @@
 package model;
 
-import classificators.bayes.BayesClassifier;
+import classifiers.bayes.BayesClassifier;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.apache.http.entity.ContentType.*;
+import static org.apache.http.entity.ContentType.TEXT_HTML;
 import static org.apache.lucene.util.IOUtils.UTF_8;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 import static org.json.HTTP.CRLF;
@@ -51,18 +52,6 @@ public class WebResponse extends Web {
         return webResponse;
     }
 
-    public void replaceInBody(String target, String replacement) throws UnsupportedEncodingException {
-        if (isHtml() ||
-                TEXT_XML.getMimeType().equals(mimeType) ||
-                TEXT_PLAIN.getMimeType().equals(mimeType) ||
-                APPLICATION_JSON.getMimeType().equals(mimeType) ||
-                APPLICATION_XML.getMimeType().equals(mimeType)) {
-            String bodyString = new String(body, getBodyEncoding());
-            bodyString = bodyString.replace(target, replacement);
-            this.body = bodyString.getBytes(getBodyEncoding());
-        }
-    }
-
     public boolean isHtml() {
         return TEXT_HTML.getMimeType().equals(mimeType);
     }
@@ -78,17 +67,27 @@ public class WebResponse extends Web {
         return BayesClassifier.classify(words);
     }
 
-    public void createCategoriesInfoScript(Map<String, Double> categoryProbabilityMap) throws UnsupportedEncodingException {
-        String bodyString = new String(body, getBodyEncoding());
-        AtomicReference<StringBuilder> infoScript = new AtomicReference<>(new StringBuilder());
-        infoScript.get().append("<script>").append("alert('");
-        for (Map.Entry<String, Double> entry : categoryProbabilityMap.entrySet()) {
-            infoScript.get().append(entry.getKey()).append(": ").append(String.format("%.4f", entry.getValue())).append("; ");
+    public void createProbabilitiesPage(Map<String, Double> categoryProbabilityMap) {
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+             OutputStreamWriter writer = new OutputStreamWriter(buffer)) {
+            Configuration configuration = new Configuration(Configuration.VERSION_2_3_28);
+            configuration.setClassForTemplateLoading(this.getClass(), "/web/html");
+            Template template = configuration.getTemplate("probabilities.ftl", Locale.UK);
+            Map<String, Object> rows = new HashMap<>();
+            rows.put("probabilities", categoryProbabilityMap.entrySet().stream()
+                    .map(entry -> new Probability(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList()));
+            template.process(rows, writer);
+            writer.flush();
+            setStatusCode(SC_OK);
+            setReasonPhrase("");
+            setVersion("HTTP/1.1");
+            setHeaders(new HashMap<>());
+            getHeaders().put(TRANSFER_ENCODING, IDENTITY.toString());
+            setBody(buffer.toByteArray());
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
         }
-        infoScript.get().append("')").append("</script>");
-        Document html = Jsoup.parse(bodyString);
-        html.head().append(infoScript.toString());
-        this.body = html.toString().getBytes(getBodyEncoding());
     }
 
     public String getBodyEncoding() {

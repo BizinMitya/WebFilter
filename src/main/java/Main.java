@@ -1,4 +1,4 @@
-import classificators.bayes.BayesClassifier;
+import classifiers.bayes.BayesClassifier;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;

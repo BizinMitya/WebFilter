@@ -56,15 +56,15 @@
 <div class="container mt-5">
     <form>
         <div class="form-group row">
-            <label for="hostNameInput" class="col-sm-3 col-form-label">Название хоста (или IP адрес)</label>
+            <label class="col-sm-3 col-form-label" for="hostNameInput">Имя хоста (или IP адрес)</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" name="hostName" id="hostNameInput" placeholder="Хост или IP"
+                <input class="form-control" id="hostNameInput" name="hostName" placeholder="Имя хоста или IP" required
                        data-toggle="tooltip" data-placement="top" maxlength="40"
-                       title="Название хоста (или IP адрес хоста), который будет помещён в чёрный список" required>
+                       title="Имя хоста (или IP адрес хоста), который будет помещён в чёрный список" type="text">
             </div>
             <div class="col-sm-3">
                 <button type="button" class="btn btn-primary" onclick="addHostToBlacklist(); $(this).blur()">
-                    Добавить и применить
+                    Добавить
                 </button>
             </div>
         </div>

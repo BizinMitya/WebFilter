@@ -60,7 +60,7 @@ public abstract class FileUtil {
                 for (int i = 0; i < lines.size(); i++) {
                     russianStemmer.setCurrent(lines.get(i));
                     russianStemmer.stem();
-                    lines.set(i, russianStemmer.getCurrent());
+                    lines.set(i, russianStemmer.getCurrent().toLowerCase());
                 }
                 Files.write(path, lines, StandardCharsets.UTF_8);
             }
@@ -72,7 +72,7 @@ public abstract class FileUtil {
     /**
      * Метод чтения ключевых слов из файлов для каждой категории
      *
-     * @return карта категория -> набор ключевых слов (документ) этой категории
+     * @return ассоциативный массив категория -> набор ключевых слов (документ) этой категории
      */
     public static Map<String, List<String>> getLearnKeywordsFromFiles() {
         prepareLearnKeywords();
