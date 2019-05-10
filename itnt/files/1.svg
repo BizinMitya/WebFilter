@@ -1,0 +1,147 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="911px" height="203px" viewBox="-0.5 -0.5 911 203"
+     content="&lt;mxfile modified=&quot;2019-05-10T19:37:57.105Z&quot; host=&quot;www.draw.io&quot; agent=&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36&quot; etag=&quot;vn6yVDAx_gXHKYzlKAtF&quot; version=&quot;10.6.7&quot; type=&quot;device&quot;&gt;&lt;diagram id=&quot;FsbFkB9oQyJZp0i54uHy&quot; name=&quot;Страница 1&quot;&gt;7Zhbb5swFMc/DS+TFoHNJTzm2k7qpqmdtMeJgiFWAUeO2yT79POVmECUrE2WTR0PzvH/GF8Ov3NC4sBJtbmhyXLxmWSodICbbRw4dQCIIshbIWyV4PuREgqKMyV5O+EB/0RadLX6jDO0ag1khJQML9tiSuoapaylJZSSdXtYTsr2qsukQB3hIU3KrvodZ2yh1CGIdvotwsXCrOyFsfI8JulTQclzrddzAJzLS7mrxMylD7paJBlZWxKcOXBCCWHKqjYTVIrQmrCp++YHvEDN+pKUz/okd8kWUS65ZucU1eyUqWBnKmfqOrFsx4FsvY/O1HOGnpG47UobtBR1ULY1weVnXgqz2hQCnkGN2JrQp9VghegL3ywcN1FxRYdR8tQ8Bo8rOS7LCSkJlfNBGIfhaDfS8rjy4h6yTFLMBIye6w6EUpdgTPUKfFGG+cO/Sx5R+ZWsMMOk5r5HwhiprAGjEhfCwciSq4nupTyiattilbq4Q7mIMJDraO1ewyKkosR5vv0k4syf97gUq44bbsz2a1KjxktohuieJyc105njDXV/nlS4FMf8hiueP8D9gta8vSdVwnc6Xi8wQw98R+KmNQ8+17pcGIj4odHGygfNyQ0iFWJ0y4cYb6Afss52EOr+epc7niFwYeeNuTHR+Vo0c+/I5IaGsx9U/wRQuV8acwvSmWxHFsLDM/O8pGSz/fH+qA6OUn0mdg8nxxmo9qNrUh30Uz230B1LHifSjixd0epKr50FZvzp/KZ9+OXyej3Pfyu10SWoPUzohWpx7J1AbXApasMOtd5A1944Mlh267AsurpEj6TRlGElxgZm3sKjAKs3QKA+eVjlW6g7CIUpwgREgcpLvLzVqNaEpQsD8mGqQZdq/XLXkybqOpl3g3OFs0yc6xjRQ3mcPaLDNtHx65g9A4WhGwyCNocx7HIYgi6HIXw7hlEHQ/Ch4XBmFcaRKYxN8ZxaBVPZQ61oPo9hrLxnQfSfxNI/zqXnXQ/MKGpjGYQGVAtM4MEumNEZ6uOwC+b/+nghEAP/OIjwNPD2WT0DiGDot0GMQA+IXtBXIf23gxh3QIS9BdL+5QMMgjOrewjEd14FT4EvuFoV3IcP+n8UPvOKatHnX4K+eWv8K7/vD+/nfTMe9/2k2kc8uhriwT7iMOoADt2w52s+/G3AeXf3j630Wf+Kw9kv&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="131.5" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000"
+              stroke-width="2.22" pointer-events="none"/>
+        <rect x="0" y="105.25" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000"
+              stroke-width="2.22" pointer-events="none"/>
+        <rect x="0" y="79" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000" stroke-width="2.22"
+              pointer-events="none"/>
+        <rect x="0" y="52.75" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000"
+              stroke-width="2.22" pointer-events="none"/>
+        <rect x="0" y="26.5" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000" stroke-width="2.22"
+              pointer-events="none"/>
+        <path d="M 4.44 23.5 L 27.78 4 L 72.22 4 L 95.56 23.5 Z" fill="#3966a0" stroke="#000000" stroke-width="2.22"
+              stroke-miterlimit="10" pointer-events="none"/>
+        <ellipse cx="91" cy="143" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="117" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="90" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="64" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="38" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 5.56 151 L 11.11 134.5 L 16.67 134.5 L 11.11 151 Z M 16.67 151 L 22.22 134.5 L 27.78 134.5 L 22.22 151 Z M 27.78 151 L 33.33 134.5 L 38.89 134.5 L 33.33 151 Z M 38.89 151 L 44.44 134.5 L 50 134.5 L 44.44 151 Z M 50 151 L 55.56 134.5 L 61.11 134.5 L 55.56 151 Z M 61.11 151 L 66.67 134.5 L 72.22 134.5 L 66.67 151 Z M 5.56 124.75 L 11.11 108.25 L 16.67 108.25 L 11.11 124.75 Z M 16.67 124.75 L 22.22 108.25 L 27.78 108.25 L 22.22 124.75 Z M 27.78 124.75 L 33.33 108.25 L 38.89 108.25 L 33.33 124.75 Z M 38.89 124.75 L 44.44 108.25 L 50 108.25 L 44.44 124.75 Z M 50 124.75 L 55.56 108.25 L 61.11 108.25 L 55.56 124.75 Z M 61.11 124.75 L 66.67 108.25 L 72.22 108.25 L 66.67 124.75 Z M 5.56 98.5 L 11.11 82 L 16.67 82 L 11.11 98.5 Z M 16.67 98.5 L 22.22 82 L 27.78 82 L 22.22 98.5 Z M 27.78 98.5 L 32.78 82 L 38.33 82 L 32.78 98.5 Z M 38.89 98.5 L 44.44 82 L 50 82 L 44.44 98.5 Z M 50 98.5 L 55.56 82 L 61.11 82 L 55.56 98.5 Z M 61.11 98.5 L 66.67 82 L 72.22 82 L 66.67 98.5 Z M 5.56 72.25 L 11.11 55.75 L 16.67 55.75 L 11.11 72.25 Z M 16.67 72.25 L 22.22 55.75 L 27.78 55.75 L 22.22 72.25 Z M 27.78 72.25 L 33.33 55.75 L 38.89 55.75 L 33.33 72.25 Z M 38.89 72.25 L 44.44 55.75 L 50 55.75 L 44.44 72.25 Z M 50 72.25 L 55.56 55.75 L 61.11 55.75 L 55.56 72.25 Z M 61.11 72.25 L 66.67 55.75 L 72.22 55.75 L 66.67 72.25 Z M 5.56 46 L 11.11 29.5 L 16.67 29.5 L 11.11 46 Z M 16.67 46 L 22.22 29.5 L 27.78 29.5 L 22.22 46 Z M 27.78 46 L 33.33 29.5 L 38.89 29.5 L 33.33 46 Z M 38.89 46 L 44.44 29.5 L 50 29.5 L 44.44 46 Z M 50 46 L 55.56 29.5 L 61.11 29.5 L 55.56 46 Z M 61.11 46 L 66.67 29.5 L 72.22 29.5 L 66.67 46 Z"
+              fill="#ffffff" stroke="none" pointer-events="none"/>
+        <g transform="translate(7.5,161.5)">
+            <switch>
+                <foreignObject style="overflow:visible;" pointer-events="all" width="86" height="19"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: inline-block; font-size: 18px; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 86px; white-space: nowrap; overflow-wrap: normal; text-align: center;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="display:inline-block;text-align:inherit;text-decoration:inherit;">Веб-сервер
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="43" y="19" fill="#000000" text-anchor="middle" font-size="18px" font-family="Times New Roman">
+                    Веб-сервер
+                </text>
+            </switch>
+        </g>
+        <rect x="320" y="123.16" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="320" y="98.63" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="320" y="74.09" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="320" y="49.56" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="320" y="25.03" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <path d="M 323.88 22.22 L 344.27 4 L 383.11 4 L 403.5 22.22 Z" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" stroke-miterlimit="10" pointer-events="none"/>
+        <ellipse cx="400" cy="134" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="399" cy="109" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="400" cy="85" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="400" cy="60" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="400" cy="36" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <path d="M 324.85 141.38 L 329.71 125.96 L 334.56 125.96 L 329.71 141.38 Z M 334.56 141.38 L 339.42 125.96 L 344.27 125.96 L 339.42 141.38 Z M 344.27 141.38 L 349.13 125.96 L 353.98 125.96 L 349.13 141.38 Z M 353.98 141.38 L 358.83 125.96 L 363.69 125.96 L 358.83 141.38 Z M 363.69 141.38 L 368.54 125.96 L 373.4 125.96 L 368.54 141.38 Z M 373.4 141.38 L 378.25 125.96 L 383.11 125.96 L 378.25 141.38 Z M 324.85 116.85 L 329.71 101.43 L 334.56 101.43 L 329.71 116.85 Z M 334.56 116.85 L 339.42 101.43 L 344.27 101.43 L 339.42 116.85 Z M 344.27 116.85 L 349.13 101.43 L 353.98 101.43 L 349.13 116.85 Z M 353.98 116.85 L 358.83 101.43 L 363.69 101.43 L 358.83 116.85 Z M 363.69 116.85 L 368.54 101.43 L 373.4 101.43 L 368.54 116.85 Z M 373.4 116.85 L 378.25 101.43 L 383.11 101.43 L 378.25 116.85 Z M 324.85 92.32 L 329.71 76.9 L 334.56 76.9 L 329.71 92.32 Z M 334.56 92.32 L 339.42 76.9 L 344.27 76.9 L 339.42 92.32 Z M 344.27 92.32 L 348.64 76.9 L 353.5 76.9 L 348.64 92.32 Z M 353.98 92.32 L 358.83 76.9 L 363.69 76.9 L 358.83 92.32 Z M 363.69 92.32 L 368.54 76.9 L 373.4 76.9 L 368.54 92.32 Z M 373.4 92.32 L 378.25 76.9 L 383.11 76.9 L 378.25 92.32 Z M 324.85 67.79 L 329.71 52.36 L 334.56 52.36 L 329.71 67.79 Z M 334.56 67.79 L 339.42 52.36 L 344.27 52.36 L 339.42 67.79 Z M 344.27 67.79 L 349.13 52.36 L 353.98 52.36 L 349.13 67.79 Z M 353.98 67.79 L 358.83 52.36 L 363.69 52.36 L 358.83 67.79 Z M 363.69 67.79 L 368.54 52.36 L 373.4 52.36 L 368.54 67.79 Z M 373.4 67.79 L 378.25 52.36 L 383.11 52.36 L 378.25 67.79 Z M 324.85 43.25 L 329.71 27.83 L 334.56 27.83 L 329.71 43.25 Z M 334.56 43.25 L 339.42 27.83 L 344.27 27.83 L 339.42 43.25 Z M 344.27 43.25 L 349.13 27.83 L 353.98 27.83 L 349.13 43.25 Z M 353.98 43.25 L 358.83 27.83 L 363.69 27.83 L 358.83 43.25 Z M 363.69 43.25 L 368.54 27.83 L 373.4 27.83 L 368.54 43.25 Z M 373.4 43.25 L 378.25 27.83 L 383.11 27.83 L 378.25 43.25 Z"
+              fill="#ffffff" stroke="none" pointer-events="none"/>
+        <rect x="320" y="4" width="0" height="0" fill="none" stroke="#000000" stroke-width="1.94"
+              pointer-events="none"/>
+        <ellipse cx="403" cy="129" rx="17.475728155339805" ry="25.233644859813083" fill="#3966a0" stroke="#000000"
+                 stroke-width="1.94" pointer-events="none"/>
+        <rect x="391.36" y="116.15" width="22.33" height="25.23" fill="none" stroke="#ffffff" stroke-width="1.94"
+              pointer-events="none"/>
+        <rect x="393.79" y="119.65" width="17.48" height="18.93" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <g transform="translate(323.5,161.5)">
+            <switch>
+                <foreignObject style="overflow:visible;" pointer-events="all" width="94" height="40"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: inline-block; font-size: 18px; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 94px; white-space: normal; overflow-wrap: normal; text-align: center;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="display:inline-block;text-align:inherit;text-decoration:inherit;">Веб прокси-сервер
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="47" y="29" fill="#000000" text-anchor="middle" font-size="18px" font-family="Times New Roman">
+                    Веб прокси-сервер
+                </text>
+            </switch>
+        </g>
+        <rect x="760" y="4" width="45" height="128.57" rx="3" ry="3" fill="#3966a0" stroke="#ffffff" stroke-width="3"
+              pointer-events="none"/>
+        <path d="M 760 25.43 L 805 25.43 M 760 68.29 L 805 68.29" fill="none" stroke="#ffffff" stroke-width="3"
+              stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="790" y="14.71" width="120" height="96.43" fill="#3966a0" stroke="#ffffff" stroke-width="3"
+              pointer-events="none"/>
+        <rect x="835" y="111.14" width="30" height="21.43" fill="#3966a0" stroke="#ffffff" stroke-width="3"
+              pointer-events="none"/>
+        <path d="M 812.5 130.43 L 887.5 130.43 L 902.5 154 L 797.5 154 Z" fill="#3966a0" stroke="#ffffff"
+              stroke-width="3" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 833.5 148.64 L 860.5 148.64 M 814 142.21 L 872.5 142.21 M 817 135.79 L 871 135.79 M 875.5 135.79 L 886 135.79 M 878.5 142.21 L 889 142.21 M 881.5 148.64 L 892 148.64"
+              fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <rect x="794.5" y="21.14" width="109.5" height="83.57" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="768" cy="79" rx="3" ry="4.285714285714286" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <g transform="translate(783.5,161.5)">
+            <switch>
+                <foreignObject style="overflow:visible;" pointer-events="all" width="104" height="19"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: inline-block; font-size: 18px; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 104px; white-space: nowrap; overflow-wrap: normal; text-align: center;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="display:inline-block;text-align:inherit;text-decoration:inherit;">Пользователь
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="52" y="19" fill="#000000" text-anchor="middle" font-size="18px" font-family="Times New Roman">
+                    Пользователь
+                </text>
+            </switch>
+        </g>
+        <path d="M 455.5 55.9 L 592.5 55.9 L 592.5 37 L 617.5 68.5 L 592.5 100 L 592.5 81.1 L 455.5 81.1 L 455.5 68.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10"
+              transform="translate(536.5,0)scale(-1,1)translate(-536.5,0)" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="536.5" y="74.5">1. Запрос к сайту</text>
+        </g>
+        <path d="M 527 21.5 L 715 21.5 L 715 0.5 L 740 35.5 L 715 70.5 L 715 49.5 L 527 49.5 L 527 35.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="633.5" y="41.5">2*. Отклонение запроса</text>
+        </g>
+        <path d="M 134 35.7 L 261 35.7 L 261 16.5 L 286 48.5 L 261 80.5 L 261 61.3 L 134 61.3 L 134 48.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10"
+              transform="translate(210,0)scale(-1,1)translate(-210,0)" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="210" y="54.5">2. Запрос к сайту</text>
+        </g>
+        <path d="M 134 105.7 L 261 105.7 L 261 86.5 L 286 118.5 L 261 150.5 L 261 131.3 L 134 131.3 L 134 118.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="210" y="124.5">3. Ответ от сайта</text>
+        </g>
+        <path d="M 434 103.8 L 715 103.8 L 715 81 L 740 119 L 715 157 L 715 134.2 L 434 134.2 L 434 119 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="587.5" y="125">4. Ответ от сайта/отклонение ответа</text>
+        </g>
+    </g>
+</svg>
