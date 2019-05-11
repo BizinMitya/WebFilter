@@ -1,0 +1,137 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="701px" height="451px" viewBox="-0.5 -0.5 701 451"
+     content="&lt;mxfile modified=&quot;2019-05-11T08:44:35.452Z&quot; host=&quot;www.draw.io&quot; agent=&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36&quot; etag=&quot;Nt18lfk8kT-NKPImRdcw&quot; version=&quot;10.6.7&quot; type=&quot;device&quot;&gt;&lt;diagram name=&quot;Page-1&quot; id=&quot;13e1069c-82ec-6db2-03f1-153e76fe0fe0&quot;&gt;7VtZc7M2FP01PGYGITY/eks7/ZamyTftTN9kkG0mAjFCztJfXwnEjhObGDsLftDAFboYnaN7jy62Bufh028Mxdsf1MdEM3T/SYMLzTAcB4pWGp4zg2k6mWHDAj8zgdJwF/yHlVFX1l3g46R2IaeU8CCuGz0aRdjjNRtijD7WL1tTUr9rjDa4ZbjzEGlb/wl8vlVWoOtlx+842GzVrV1LdayQd79hdBep+2kGXKefrDtEuS91fbJFPn2smOBSg3NGKc+Owqc5JnJq82nLxl3v6S2+N8MRP2QA+wM/3Pz7nOz++vMqiv+Gt9+m3pXy8oDITs2HttC1CdAWQHN1eTzT02OYHjtpa6ne7LH4cz6V4gljebgLyfdgjUkQibNZjFkQYo6Z6CHKfFPaZgJYjoRN9oP0nBAUJ8EqdasLC8PejiXBA77FScYfaaU7Ll3NC15I41o4UxwDrjq/RmFAJDt/iXsm4iv/xI+ivaUhiuQlASFzSihLH0JiaHiesCec0Xtc6fHtlW3ZokfNGWYcP+0FAxQQi5WDqXha9iwuyQfkLFKrJp/NxwoFcwZuK+wz83FI0X5TuC6hFwcK/SOY4LSZ0MR3y0OiQIppEPH0K1gzzVo0YKaMb+mGRohUgT4EiyZ8dWx8hN11Jza25+LV+lBs9i+FvYCZVg0vpwuvNlzuUGgBe4TrCLgM/cJ4GXDE6wi8ILw0Xt150cjzn2jBVZoGzfTETdtZapmnrTEmybcmSVN/b0nS/Oqr2PhQSfLLa5qj4Lp8khyX14dKkh2aZk+SBLV9ozw2xp3kaZKk/e52kjktv+4yhh8q7MIvvzc5Cq+Lh123O+w6ebVOtNeVSLtUEdjQ81Bc2Z2UQxb5PkbY7bSdtVgg5zbwEJmSYCMwW6wo5zQUU48jfyprsdJGqHffD/LsfthvFWxfjYUVKPJpZ5ggLiJ9zVUXFsrbjaR1Cbqh2zXUgQXrLhK6Yx5Wo6pl14Yjs0GfliOO2AbzlqOUGsUj9mfLpJMtU1CBfqIoYeSpWVHFaWXtRc4o0c4rjMooV/Ans0zV8D4sojGWDPFRssW+CjyiW7Hl0Hx8Mn69kUxNDhiG1Y9MTVa2HA1MJtD9vuAVNonvDIHUVIexqn75sezKpWNEudSMSuYBUxw3iRcGvi+HzZAyeIIHab5KYuQF0eYXjYX1yj5JBjuPHGyoQWBZh8lBZ7BNeEcprYlZZeFHNJX6Fb0h1+udurZUF8vS+qFCQfPFD3DdfqEATKyXHQ0dCg7YrDO5y0Ll9quCar7kWEbB1toskgJBK0xmxbvW+oKSb1vr4OoFuOqFsbq9VryH7VW8fnljDo6UHG9bUKP+O4v+a6Rst7f+M192NPQ67RaAE7NGjpITUBFIpe99rMry96RS6lmMQq8FNrR6Cz3rZUcDs8boqOEcwZppTcUVam2ZR5psXIU6VU+NoW9h4CgG66Hn0mLQ6Ng/jGKwXOVGY+L7isGWo6HDxQEi/9OIwdd+2nVOMZjv/0cxeM5ioAlOVAxsORp6nXb8bKx8Zbes5NsGJ4qKzhlI89kkYQNy90S1v5ajobnT8WuKS0jCBuucliR0R0l4sCQ0wcUlYUc5Y5SEJUDm5DSSsOVo6HDRUXf4vJLQfT+SEO75T8coCU8pCU3rRPVBe3LZ+iDs2LqNknDQGN+EvHeVsEnCc1cJYcc7oDHUDB1qeu8+m7w79+4T7ilWjKFmwFBzot2naQ21+xSn5Z9gs8vLPxrD5f8=&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="100" y="0" width="100" height="40" fill="#fff2cc" stroke="#d6b656" pointer-events="none"/>
+        <path d="M 150 40 L 150 450" fill="none" stroke="#d6b656" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="149.5" y="27.5">Браузер</text>
+        </g>
+        <rect x="145" y="70" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="145" y="200" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="145" y="330" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="350" y="0" width="100" height="40" fill="#fff2cc" stroke="#d6b656" pointer-events="none"/>
+        <path d="M 400 40 L 400 450" fill="none" stroke="#d6b656" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="399.5" y="27.5">Веб-фильтр</text>
+        </g>
+        <rect x="395" y="70" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="395" y="200" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="395" y="330" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="600" y="0" width="100" height="40" fill="#fff2cc" stroke="#d6b656" pointer-events="none"/>
+        <path d="M 650 40 L 650 450" fill="none" stroke="#d6b656" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="649.5" y="27.5">Веб-сервер</text>
+        </g>
+        <rect x="645" y="200" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <rect x="645" y="330" width="10" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <path d="M 156 73 L 386.88 73" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 393.88 73 L 386.88 76.5 L 386.88 69.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="210" y="50" width="133" height="22" stroke-width="0"/>
+            <text x="275.5" y="66.5">Запрос страницы</text>
+        </g>
+        <path d="M 395 145 L 158.24 145" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <path d="M 166.12 140.5 L 157.12 145 L 166.12 149.5" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="191" y="122" width="169" height="22" stroke-width="0"/>
+            <text x="274.5" y="138.5">Сайт в черном списке</text>
+        </g>
+        <path d="M 0 75 L 86 75 L 100 89 L 100 145 L 0 145 L 0 75 Z" fill="#fff2cc" stroke="#d6b656"
+              stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 86 75 L 86 89 L 100 89" fill="none" stroke="#d6b656" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="49.5" y="91.5">Сайт в</text>
+            <text x="49.5" y="113.5">черном</text>
+            <text x="49.5" y="135.5">списке</text>
+        </g>
+        <path d="M 100 108 L 145 108" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 155 203 L 385.88 203" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 392.88 203 L 385.88 206.5 L 385.88 199.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="209" y="180" width="133" height="22" stroke-width="0"/>
+            <text x="274.5" y="196.5">Запрос страницы</text>
+        </g>
+        <path d="M 394 275 L 157.24 275" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <path d="M 165.12 270.5 L 156.12 275 L 165.12 279.5" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="207" y="252" width="135" height="22" stroke-width="0"/>
+            <text x="273.5" y="268.5">Доступ запрещен</text>
+        </g>
+        <path d="M 0 205 L 86 205 L 100 219 L 100 275 L 0 275 L 0 205 Z" fill="#fff2cc" stroke="#d6b656"
+              stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 86 205 L 86 219 L 100 219" fill="none" stroke="#d6b656" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="49.5" y="221.5">Доступ к</text>
+            <text x="49.5" y="243.5">контенту</text>
+            <text x="49.5" y="265.5">запрещен</text>
+        </g>
+        <path d="M 100 240 L 145 240" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 156 333 L 386.88 333" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 393.88 333 L 386.88 336.5 L 386.88 329.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="210" y="310" width="133" height="22" stroke-width="0"/>
+            <text x="275.5" y="326.5">Запрос страницы</text>
+        </g>
+        <path d="M 395 405 L 158.24 405" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <path d="M 166.12 400.5 L 157.12 405 L 166.12 409.5" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="205" y="382" width="142" height="22" stroke-width="0"/>
+            <text x="274.5" y="398.5">Возврат страницы</text>
+        </g>
+        <path d="M 0 335 L 86 335 L 100 349 L 100 405 L 0 405 L 0 335 Z" fill="#fff2cc" stroke="#d6b656"
+              stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 86 335 L 86 349 L 100 349" fill="none" stroke="#d6b656" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="49.5" y="351.5">Доступ к</text>
+            <text x="49.5" y="373.5">контенту</text>
+            <text x="49.5" y="395.5">разрешен</text>
+        </g>
+        <path d="M 100 369 L 145 369" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 405 203 L 635.88 203" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 642.88 203 L 635.88 206.5 L 635.88 199.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="459" y="180" width="133" height="22" stroke-width="0"/>
+            <text x="524.5" y="196.5">Запрос страницы</text>
+        </g>
+        <path d="M 644 275 L 407.24 275" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <path d="M 415.12 270.5 L 406.12 275 L 415.12 279.5" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="454" y="252" width="142" height="22" stroke-width="0"/>
+            <text x="523.5" y="268.5">Возврат страницы</text>
+        </g>
+        <path d="M 405 333 L 635.88 333" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 642.88 333 L 635.88 336.5 L 635.88 329.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="459" y="310" width="133" height="22" stroke-width="0"/>
+            <text x="524.5" y="326.5">Запрос страницы</text>
+        </g>
+        <path d="M 645 405 L 408.24 405" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3"
+              pointer-events="none"/>
+        <path d="M 416.12 400.5 L 407.12 405 L 416.12 409.5" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <rect fill="#ffffff" stroke="none" x="455" y="382" width="142" height="22" stroke-width="0"/>
+            <text x="524.5" y="398.5">Возврат страницы</text>
+        </g>
+    </g>
+</svg>
