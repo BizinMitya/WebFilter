@@ -53,11 +53,11 @@ public abstract class SettingsDAO {
         return hasKey;
     }
 
-    public static void addSetting(String key, String value) {
+    private static void addSetting(String key, String value) {
         addOrUpdateHelper(key, value, INSERT_SETTING_QUERY);
     }
 
-    public static void updateSetting(String key, String value) {
+    private static void updateSetting(String key, String value) {
         addOrUpdateHelper(value, key, UPDATE_SETTING_QUERY);
     }
 
@@ -122,14 +122,6 @@ public abstract class SettingsDAO {
             LOGGER.error(e.getMessage(), e);
         }
         return allSettings;
-    }
-
-    public static void saveAllSettings(Map<String, String> allSettings) {
-        for (Map.Entry<String, String> entry : allSettings.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            addSetting(key, value);
-        }
     }
 
     public static void updateAllSettings(Map<String, String> allSettings) {
