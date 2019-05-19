@@ -1,0 +1,164 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="774px" height="178px" viewBox="-0.5 -0.5 774 178"
+     content="&lt;mxfile modified=&quot;2019-05-19T13:51:17.255Z&quot; host=&quot;www.draw.io&quot; agent=&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36&quot; etag=&quot;aR_rY-fU73eu8u8pCVfg&quot; version=&quot;10.6.7&quot; type=&quot;device&quot;&gt;&lt;diagram id=&quot;RdXCWAT5ptxXBJ9ayTNo&quot; name=&quot;Страница 1&quot;&gt;7Zldb5swFIZ/TW4jsAOGyybrx6RumtpNvZwcMGDVYOS4Jdmvnw0mgThN0iot1RZfEPs9ju1z/PhDMIKzfHktcJl94zFhI+DEyxH8MgIAIaieWlg1wmSCGiEVNG4kdyPc0z/EiI5Rn2hMFr2KknMmadkXI14UJJI9DQvBq361hLN+ryVOiSXcR5jZ6gONZdaoAUAb/YbQNGt7dv2wscxx9JgK/lSY/kYAXtWpMee4bcs4ushwzKuOBC9HcCY4l00uX84I06Ftw9b87+oFK2hafcbsyXhyi1dEKMlpRy5IIY9pClpNPZC5HjERz7rFevRy1UZMOVLqbL5MNRHjgsiKi8fF2NSH07Wrji5IwR/XsXWVklDGZpxxUbcHYej7F5uaHYtTJ2XhJY6o1IS5jjPWSsHAVJgeVKeSqhm9xXPCfvAFlZQXyjbnUvK8U+GC0VQbJC+Vik0pUmFqhq17KdJbkuiwgbofo90ZArSUMpokq686eGoSp1VGJblX1XRMKhUR7SEvpEHdDUz5CueUaRd+0lwBD5zvpFLPO55jNYppJnNm4mPPXzvZyg+y7HBr5vOa8JxIsVJVWqtv+DWrEgReU642jLstKVmXb8+I2KyrdN32hiCVMRDtBmryAlBq4uVrgCoFX65+/39YeXuwOoDRNnlsa/DrUZ2WtwkKB+TNs3j7tXgVZ9EuTJI6vZ27z0oXOh1dJyAHhc5hcrz3Ise3yHEPYtPcOkDzq4JQ33ycsa+z2imgl2/CaHljACm4jLIWn5dZAjZL5kKxA84mHU1ZC1FO41j7dYgjNPZ9GyS/D5IbDkaNHwRb1IRjmxu0A5tTUIMsarwzNcdSA9y3XZBOQA1EQ1ITWNT4p6HmnyUFDkeK0z+VIJh8ICmhRQo67y9HU+N9mv0F+s6HMdO+T+lAE5y3l72goMGuL9b2suPS+26guBYo4AzKXlAGvOe6qD13BjmJXPs1IzwfRceCA93hwAkGPIrsF8rheYfZCwocDhR7h3m/w0gVNx88alvnoxK8/As=&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="127.5" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000"
+              stroke-width="2.22" pointer-events="none"/>
+        <rect x="0" y="101.25" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000"
+              stroke-width="2.22" pointer-events="none"/>
+        <rect x="0" y="75" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000" stroke-width="2.22"
+              pointer-events="none"/>
+        <rect x="0" y="48.75" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000"
+              stroke-width="2.22" pointer-events="none"/>
+        <rect x="0" y="22.5" width="100" height="22.5" rx="3" ry="3" fill="#3966a0" stroke="#000000" stroke-width="2.22"
+              pointer-events="none"/>
+        <path d="M 4.44 19.5 L 27.78 0 L 72.22 0 L 95.56 19.5 Z" fill="#3966a0" stroke="#000000" stroke-width="2.22"
+              stroke-miterlimit="10" pointer-events="none"/>
+        <ellipse cx="91" cy="139" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="113" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="86" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="60" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="91" cy="34" rx="4.444444444444445" ry="6" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 5.56 147 L 11.11 130.5 L 16.67 130.5 L 11.11 147 Z M 16.67 147 L 22.22 130.5 L 27.78 130.5 L 22.22 147 Z M 27.78 147 L 33.33 130.5 L 38.89 130.5 L 33.33 147 Z M 38.89 147 L 44.44 130.5 L 50 130.5 L 44.44 147 Z M 50 147 L 55.56 130.5 L 61.11 130.5 L 55.56 147 Z M 61.11 147 L 66.67 130.5 L 72.22 130.5 L 66.67 147 Z M 5.56 120.75 L 11.11 104.25 L 16.67 104.25 L 11.11 120.75 Z M 16.67 120.75 L 22.22 104.25 L 27.78 104.25 L 22.22 120.75 Z M 27.78 120.75 L 33.33 104.25 L 38.89 104.25 L 33.33 120.75 Z M 38.89 120.75 L 44.44 104.25 L 50 104.25 L 44.44 120.75 Z M 50 120.75 L 55.56 104.25 L 61.11 104.25 L 55.56 120.75 Z M 61.11 120.75 L 66.67 104.25 L 72.22 104.25 L 66.67 120.75 Z M 5.56 94.5 L 11.11 78 L 16.67 78 L 11.11 94.5 Z M 16.67 94.5 L 22.22 78 L 27.78 78 L 22.22 94.5 Z M 27.78 94.5 L 32.78 78 L 38.33 78 L 32.78 94.5 Z M 38.89 94.5 L 44.44 78 L 50 78 L 44.44 94.5 Z M 50 94.5 L 55.56 78 L 61.11 78 L 55.56 94.5 Z M 61.11 94.5 L 66.67 78 L 72.22 78 L 66.67 94.5 Z M 5.56 68.25 L 11.11 51.75 L 16.67 51.75 L 11.11 68.25 Z M 16.67 68.25 L 22.22 51.75 L 27.78 51.75 L 22.22 68.25 Z M 27.78 68.25 L 33.33 51.75 L 38.89 51.75 L 33.33 68.25 Z M 38.89 68.25 L 44.44 51.75 L 50 51.75 L 44.44 68.25 Z M 50 68.25 L 55.56 51.75 L 61.11 51.75 L 55.56 68.25 Z M 61.11 68.25 L 66.67 51.75 L 72.22 51.75 L 66.67 68.25 Z M 5.56 42 L 11.11 25.5 L 16.67 25.5 L 11.11 42 Z M 16.67 42 L 22.22 25.5 L 27.78 25.5 L 22.22 42 Z M 27.78 42 L 33.33 25.5 L 38.89 25.5 L 33.33 42 Z M 38.89 42 L 44.44 25.5 L 50 25.5 L 44.44 42 Z M 50 42 L 55.56 25.5 L 61.11 25.5 L 55.56 42 Z M 61.11 42 L 66.67 25.5 L 72.22 25.5 L 66.67 42 Z"
+              fill="#ffffff" stroke="none" pointer-events="none"/>
+        <g transform="translate(9.5,157.5)">
+            <switch>
+                <foreignObject style="overflow:visible;" pointer-events="all" width="82" height="19"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: inline-block; font-size: 18px; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 82px; white-space: nowrap; overflow-wrap: normal; text-align: center;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="display:inline-block;text-align:inherit;text-decoration:inherit;">Web server
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="41" y="19" fill="#000000" text-anchor="middle" font-size="18px" font-family="Times New Roman">
+                    Web server
+                </text>
+            </switch>
+        </g>
+        <rect x="312" y="119.16" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="312" y="94.63" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="312" y="70.09" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="312" y="45.56" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <rect x="312" y="21.03" width="87.38" height="21.03" rx="2.8" ry="2.8" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" pointer-events="none"/>
+        <path d="M 315.88 18.22 L 336.27 0 L 375.11 0 L 395.5 18.22 Z" fill="#3966a0" stroke="#000000"
+              stroke-width="1.94" stroke-miterlimit="10" pointer-events="none"/>
+        <ellipse cx="392" cy="130" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="391" cy="105" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="392" cy="81" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="392" cy="56" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <ellipse cx="392" cy="32" rx="3.883495145631068" ry="5.607476635514018" fill="#ffffff" stroke="none"
+                 pointer-events="none"/>
+        <path d="M 316.85 137.38 L 321.71 121.96 L 326.56 121.96 L 321.71 137.38 Z M 326.56 137.38 L 331.42 121.96 L 336.27 121.96 L 331.42 137.38 Z M 336.27 137.38 L 341.13 121.96 L 345.98 121.96 L 341.13 137.38 Z M 345.98 137.38 L 350.83 121.96 L 355.69 121.96 L 350.83 137.38 Z M 355.69 137.38 L 360.54 121.96 L 365.4 121.96 L 360.54 137.38 Z M 365.4 137.38 L 370.25 121.96 L 375.11 121.96 L 370.25 137.38 Z M 316.85 112.85 L 321.71 97.43 L 326.56 97.43 L 321.71 112.85 Z M 326.56 112.85 L 331.42 97.43 L 336.27 97.43 L 331.42 112.85 Z M 336.27 112.85 L 341.13 97.43 L 345.98 97.43 L 341.13 112.85 Z M 345.98 112.85 L 350.83 97.43 L 355.69 97.43 L 350.83 112.85 Z M 355.69 112.85 L 360.54 97.43 L 365.4 97.43 L 360.54 112.85 Z M 365.4 112.85 L 370.25 97.43 L 375.11 97.43 L 370.25 112.85 Z M 316.85 88.32 L 321.71 72.9 L 326.56 72.9 L 321.71 88.32 Z M 326.56 88.32 L 331.42 72.9 L 336.27 72.9 L 331.42 88.32 Z M 336.27 88.32 L 340.64 72.9 L 345.5 72.9 L 340.64 88.32 Z M 345.98 88.32 L 350.83 72.9 L 355.69 72.9 L 350.83 88.32 Z M 355.69 88.32 L 360.54 72.9 L 365.4 72.9 L 360.54 88.32 Z M 365.4 88.32 L 370.25 72.9 L 375.11 72.9 L 370.25 88.32 Z M 316.85 63.79 L 321.71 48.36 L 326.56 48.36 L 321.71 63.79 Z M 326.56 63.79 L 331.42 48.36 L 336.27 48.36 L 331.42 63.79 Z M 336.27 63.79 L 341.13 48.36 L 345.98 48.36 L 341.13 63.79 Z M 345.98 63.79 L 350.83 48.36 L 355.69 48.36 L 350.83 63.79 Z M 355.69 63.79 L 360.54 48.36 L 365.4 48.36 L 360.54 63.79 Z M 365.4 63.79 L 370.25 48.36 L 375.11 48.36 L 370.25 63.79 Z M 316.85 39.25 L 321.71 23.83 L 326.56 23.83 L 321.71 39.25 Z M 326.56 39.25 L 331.42 23.83 L 336.27 23.83 L 331.42 39.25 Z M 336.27 39.25 L 341.13 23.83 L 345.98 23.83 L 341.13 39.25 Z M 345.98 39.25 L 350.83 23.83 L 355.69 23.83 L 350.83 39.25 Z M 355.69 39.25 L 360.54 23.83 L 365.4 23.83 L 360.54 39.25 Z M 365.4 39.25 L 370.25 23.83 L 375.11 23.83 L 370.25 39.25 Z"
+              fill="#ffffff" stroke="none" pointer-events="none"/>
+        <rect x="312" y="0" width="0" height="0" fill="none" stroke="#000000" stroke-width="1.94"
+              pointer-events="none"/>
+        <ellipse cx="395" cy="125" rx="17.475728155339805" ry="25.233644859813083" fill="#3966a0" stroke="#000000"
+                 stroke-width="1.94" pointer-events="none"/>
+        <rect x="383.36" y="112.15" width="22.33" height="25.23" fill="none" stroke="#ffffff" stroke-width="1.94"
+              pointer-events="none"/>
+        <rect x="385.79" y="115.65" width="17.48" height="18.93" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <g transform="translate(326.5,157.5)">
+            <switch>
+                <foreignObject style="overflow:visible;" pointer-events="all" width="72" height="19"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: inline-block; font-size: 18px; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 74px; white-space: nowrap; overflow-wrap: normal; text-align: center;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="display:inline-block;text-align:inherit;text-decoration:inherit;">Web filter
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="36" y="19" fill="#000000" text-anchor="middle" font-size="18px" font-family="Times New Roman">
+                    Web filter
+                </text>
+            </switch>
+        </g>
+        <rect x="623" y="0" width="45" height="128.57" rx="3" ry="3" fill="#3966a0" stroke="#ffffff" stroke-width="3"
+              pointer-events="none"/>
+        <path d="M 623 21.43 L 668 21.43 M 623 64.29 L 668 64.29" fill="none" stroke="#ffffff" stroke-width="3"
+              stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="653" y="10.71" width="120" height="96.43" fill="#3966a0" stroke="#ffffff" stroke-width="3"
+              pointer-events="none"/>
+        <rect x="698" y="107.14" width="30" height="21.43" fill="#3966a0" stroke="#ffffff" stroke-width="3"
+              pointer-events="none"/>
+        <path d="M 675.5 126.43 L 750.5 126.43 L 765.5 150 L 660.5 150 Z" fill="#3966a0" stroke="#ffffff"
+              stroke-width="3" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 696.5 144.64 L 723.5 144.64 M 677 138.21 L 735.5 138.21 M 680 131.79 L 734 131.79 M 738.5 131.79 L 749 131.79 M 741.5 138.21 L 752 138.21 M 744.5 144.64 L 755 144.64"
+              fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" stroke-miterlimit="10"
+              pointer-events="none"/>
+        <rect x="657.5" y="17.14" width="109.5" height="83.57" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <ellipse cx="631" cy="75" rx="3" ry="4.285714285714286" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <g transform="translate(681.5,157.5)">
+            <switch>
+                <foreignObject style="overflow:visible;" pointer-events="all" width="34" height="19"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: inline-block; font-size: 18px; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 35px; white-space: nowrap; overflow-wrap: normal; text-align: center;">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="display:inline-block;text-align:inherit;text-decoration:inherit;">User
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="17" y="19" fill="#000000" text-anchor="middle" font-size="18px" font-family="Times New Roman">
+                    User
+                </text>
+            </switch>
+        </g>
+        <path d="M 521 19.5 L 566 19.5 L 566 4.5 L 591 29.5 L 566 54.5 L 566 39.5 L 521 39.5 L 521 29.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10"
+              transform="translate(556,0)scale(-1,1)translate(-556,0)" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="555.5" y="35.5">1</text>
+        </g>
+        <path d="M 211 19.5 L 256 19.5 L 256 4.5 L 281 29.5 L 256 54.5 L 256 39.5 L 211 39.5 L 211 29.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10"
+              transform="translate(246,0)scale(-1,1)translate(-246,0)" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="245.5" y="35.5">5</text>
+        </g>
+        <path d="M 133 54.5 L 178 54.5 L 178 39.5 L 203 64.5 L 178 89.5 L 178 74.5 L 133 74.5 L 133 64.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="167.5" y="70.5">6</text>
+        </g>
+        <path d="M 211 90 L 256 90 L 256 75 L 281 100 L 256 125 L 256 110 L 211 110 L 211 100 Z" fill="#ffffff"
+              stroke="#333333" stroke-width="2" stroke-miterlimit="10"
+              transform="translate(246,0)scale(-1,1)translate(-246,0)" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="245.5" y="106">7</text>
+        </g>
+        <path d="M 133 115 L 178 115 L 178 100 L 203 125 L 178 150 L 178 135 L 133 135 L 133 125 Z" fill="#ffffff"
+              stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="167.5" y="131">8</text>
+        </g>
+        <path d="M 450.5 54.5 L 495.5 54.5 L 495.5 39.5 L 520.5 64.5 L 495.5 89.5 L 495.5 74.5 L 450.5 74.5 L 450.5 64.5 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="485" y="70.5">2</text>
+        </g>
+        <path d="M 521 90 L 566 90 L 566 75 L 591 100 L 566 125 L 566 110 L 521 110 L 521 100 Z" fill="#ffffff"
+              stroke="#333333" stroke-width="2" stroke-miterlimit="10"
+              transform="translate(556,0)scale(-1,1)translate(-556,0)" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="555.5" y="106">3</text>
+        </g>
+        <path d="M 450.5 115 L 495.5 115 L 495.5 100 L 520.5 125 L 495.5 150 L 495.5 135 L 450.5 135 L 450.5 125 Z"
+              fill="#ffffff" stroke="#333333" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="#000000" font-family="Times New Roman" text-anchor="middle" font-size="18px">
+            <text x="485" y="131">9</text>
+        </g>
+    </g>
+</svg>
