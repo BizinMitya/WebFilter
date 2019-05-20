@@ -11,19 +11,15 @@ import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import util.CertUtil;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.HashMap;
+import java.security.cert.CertificateEncodingException;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FakeTlsServer extends DefaultTlsServer {
 
     private static final Logger LOGGER = Logger.getLogger(FakeTlsServer.class);
-    private static final Map<String, FakeCertificate> CERTIFICATE_CACHE = new HashMap<>();
+    private static final Map<String, FakeCertificate> CERTIFICATE_CACHE = new ConcurrentHashMap<>();
 
     private String host;
 
@@ -34,12 +30,9 @@ public class FakeTlsServer extends DefaultTlsServer {
     @Override
     protected TlsSignerCredentials getRSASignerCredentials() throws IOException {
         try {
-            FakeCertificate fakeCertificate;
-            if (CERTIFICATE_CACHE.containsKey(host)) {
-                fakeCertificate = CERTIFICATE_CACHE.get(host);
-            } else {
-                fakeCertificate = CertUtil.createFakeCertificate(host);
-                CERTIFICATE_CACHE.put(host, fakeCertificate);
+            FakeCertificate fakeCertificate = CERTIFICATE_CACHE.computeIfAbsent(host, CertUtil::createFakeCertificate);
+            if (Objects.isNull(fakeCertificate)) {
+                throw new IllegalArgumentException("Fake certificate is null! Check generation of certificate!");
             }
             X509CertificateHolder x509CertificateHolder =
                     new X509CertificateHolder(fakeCertificate.getCertificate().getEncoded());
@@ -48,8 +41,7 @@ public class FakeTlsServer extends DefaultTlsServer {
             });
             return new DefaultTlsSignerCredentials(context, bcCert,
                     PrivateKeyFactory.createKey(fakeCertificate.getPrivateKey().getEncoded()));
-        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException
-                | SignatureException | NoSuchProviderException | InvalidKeySpecException e) {
+        } catch (CertificateEncodingException e) {
             LOGGER.error(e.getMessage(), e);
             throw new IOException(e);
         }

@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import util.CertUtil;
 
 import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
+import java.security.Security;
 
 class PerformanceTest {
 
@@ -37,17 +35,11 @@ class PerformanceTest {
 
     @Test
     void test2() {
-        try {
-            int count = 100;
-            System.out.println("Среднее время генерации сертификата: " + createCertificateAverageTime(count));
-        } catch (IOException | CertificateException | NoSuchAlgorithmException |
-                InvalidKeyException | SignatureException | NoSuchProviderException |
-                InvalidKeySpecException e) {
-            Assertions.fail(e);
-        }
+        int count = 100;
+        System.out.println("Среднее время генерации сертификата: " + createCertificateAverageTime(count));
     }
 
-    long createCertificateAverageTime(int count) throws CertificateException, NoSuchAlgorithmException, IOException, SignatureException, NoSuchProviderException, InvalidKeyException, InvalidKeySpecException {
+    long createCertificateAverageTime(int count) {
         long average = 0;
         for (int i = 0; i < count; i++) {
             average += createCertificate();
@@ -55,7 +47,7 @@ class PerformanceTest {
         return average / count;
     }
 
-    long createCertificate() throws CertificateException, NoSuchAlgorithmException, IOException, SignatureException, NoSuchProviderException, InvalidKeyException, InvalidKeySpecException {
+    long createCertificate() {
         long startTime = System.currentTimeMillis();
         CertUtil.createFakeCertificate(TEST_HOST);
         return System.currentTimeMillis() - startTime;
