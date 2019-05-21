@@ -2,6 +2,7 @@ package servlets;
 
 import model.Host;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import util.HostUtil;
 
@@ -23,7 +24,7 @@ public class BlacklistProxyServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(BlacklistProxyServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(HttpServletRequest request, @NotNull HttpServletResponse response) {
         try (Writer writer = response.getWriter()) {
             response.setCharacterEncoding(UTF_8.toString());
             JSONArray jsonArray = new JSONArray(getAllHosts());
@@ -35,7 +36,7 @@ public class BlacklistProxyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(@NotNull HttpServletRequest request, HttpServletResponse response) {
         try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
             String body = reader.readLine();
@@ -55,7 +56,7 @@ public class BlacklistProxyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(@NotNull HttpServletRequest request, HttpServletResponse response) {
         try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
             String body = reader.readLine();

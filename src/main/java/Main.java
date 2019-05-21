@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.jetbrains.annotations.NotNull;
 import servlets.*;
 
 import java.awt.*;
@@ -47,7 +48,7 @@ public class Main {
         }
     }
 
-    private static void addServlets(ServletHandler servletHandler) {
+    private static void addServlets(@NotNull ServletHandler servletHandler) {
         servletHandler.addServletWithMapping(StartHttpProxyServlet.class, "/proxy/startHttp");
         servletHandler.addServletWithMapping(StopHttpProxyServlet.class, "/proxy/stopHttp");
         servletHandler.addServletWithMapping(StartHttpsProxyServlet.class, "/proxy/startHttps");

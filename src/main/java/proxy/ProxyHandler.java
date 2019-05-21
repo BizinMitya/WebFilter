@@ -4,6 +4,7 @@ import model.Host;
 import model.WebRequest;
 import model.WebResponse;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.HostUtil;
 
@@ -20,7 +21,7 @@ public abstract class ProxyHandler {
     private static final Logger LOGGER = Logger.getLogger(ProxyHandler.class);
     private static final double EPS = 1e-6;
 
-    public static WebResponse doHttpRequestToServer(WebRequest webRequest) throws IOException {
+    public static WebResponse doHttpRequestToServer(@NotNull WebRequest webRequest) throws IOException {
         LOGGER.info(webRequest.getMethod() + " " + webRequest.getHost());
         Host host = HostUtil.createHostFromHostOrIp(webRequest.getHost());
         if (isHostInBlacklist(host)) {
@@ -31,7 +32,7 @@ public abstract class ProxyHandler {
     }
 
     @Nullable
-    public static WebResponse doHttpsRequestToServer(WebRequest webRequest) throws IOException {
+    public static WebResponse doHttpsRequestToServer(@NotNull WebRequest webRequest) throws IOException {
         LOGGER.info(webRequest.getMethod() + " " + webRequest.getHost());
         Host host = HostUtil.createHostFromHostOrIp(webRequest.getHost());
         if (isHostInBlacklist(host)) {
@@ -41,7 +42,7 @@ public abstract class ProxyHandler {
         }
     }
 
-    public static WebResponse fromServer(WebResponse webResponse) {
+    public static WebResponse fromServer(@NotNull WebResponse webResponse) {
         if (webResponse.getBody() != null && webResponse.isHtml()) {
             try {
                 Map<String, Double> categoryProbabilityMap = webResponse.classifyContent();
@@ -56,7 +57,7 @@ public abstract class ProxyHandler {
         return webResponse;
     }
 
-    private static boolean allEqual(List<Double> probabilities) {
+    private static boolean allEqual(@NotNull List<Double> probabilities) {
         if (!probabilities.isEmpty()) {
             Double value = probabilities.get(0);
             for (int i = 1; i < probabilities.size(); i++) {

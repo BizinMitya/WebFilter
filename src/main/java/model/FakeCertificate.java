@@ -5,8 +5,8 @@ import java.security.cert.X509Certificate;
 
 public class FakeCertificate {
 
-    private X509Certificate certificate;
-    private PrivateKey privateKey;
+    private final X509Certificate certificate;
+    private final PrivateKey privateKey;
 
     public FakeCertificate(X509Certificate certificate, PrivateKey privateKey) {
         this.certificate = certificate;

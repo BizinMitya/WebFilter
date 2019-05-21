@@ -3,6 +3,7 @@ package dao;
 import db.JDBC;
 import model.Host;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +37,7 @@ public abstract class BlacklistDAO {
         return results;
     }
 
-    public static void addHostInBlacklist(Host host) throws SQLException {
+    public static void addHostInBlacklist(@NotNull Host host) throws SQLException {
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_HOST_QUERY)) {
             preparedStatement.setString(1, host.getIp());
@@ -45,7 +46,7 @@ public abstract class BlacklistDAO {
         }
     }
 
-    public static void removeHost(Host host) throws SQLException {
+    public static void removeHost(@NotNull Host host) throws SQLException {
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_HOST_QUERY)) {
             preparedStatement.setString(1, host.getIp());
@@ -53,7 +54,7 @@ public abstract class BlacklistDAO {
         }
     }
 
-    public static boolean isHostInBlacklist(Host host) {
+    public static boolean isHostInBlacklist(@NotNull Host host) {
         boolean hostInBlacklist = false;
         try (Connection connection = JDBC.getJdbcDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_HOST_QUERY)) {

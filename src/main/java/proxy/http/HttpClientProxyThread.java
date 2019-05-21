@@ -3,6 +3,7 @@ package proxy.http;
 import model.WebRequest;
 import model.WebResponse;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import proxy.ProxyHandler;
 
 import java.io.IOException;
@@ -18,13 +19,13 @@ import static model.WebRequest.readWebRequest;
 /**
  * Поток для клиента HTTP прокси-сервера
  */
-public class HttpClientProxyThread implements Runnable {
+class HttpClientProxyThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(HttpClientProxyThread.class);
 
     private Socket socket;
 
-    HttpClientProxyThread(Socket socket) throws SocketException {
+    HttpClientProxyThread(@NotNull Socket socket) throws SocketException {
         String timeoutForClientString = getSettingByKey(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
         int timeoutForClient = Integer.parseInt(timeoutForClientString);
         socket.setSoTimeout(timeoutForClient);

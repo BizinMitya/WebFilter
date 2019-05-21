@@ -8,6 +8,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.SSLSocket;
@@ -19,10 +20,10 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static dao.SettingsDAO.*;
 import static org.apache.http.HttpHeaders.*;
+import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.apache.lucene.util.IOUtils.UTF_8;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
 import static org.json.HTTP.CRLF;
@@ -46,7 +47,7 @@ public class WebRequest extends Web {
     private Map<String, String> headers;
     private String version;
 
-    public WebRequest() {
+    private WebRequest() {
         headers = new HashMap<>();
         setSettings();
     }
@@ -80,14 +81,14 @@ public class WebRequest extends Web {
         }
     }
 
-    private static void parseStartLine(WebRequest webRequest, String startLine) {
+    private static void parseStartLine(@NotNull WebRequest webRequest, @NotNull String startLine) {
         String[] startLineParameters = startLine.split(" ");
         webRequest.method = startLineParameters[0];
         webRequest.URI = startLineParameters[1];
         webRequest.version = startLineParameters[2];
     }
 
-    private static void parseHeader(WebRequest webRequest, String header) {
+    private static void parseHeader(WebRequest webRequest, @NotNull String header) {
         int idx = header.indexOf(":");
         if (idx == -1) {
             LOGGER.error("Некорректный параметр заголовка: " + header);
@@ -112,7 +113,7 @@ public class WebRequest extends Web {
         }
     }
 
-    private Map<String, String> getMapHeaders(Header[] headers) {
+    private Map<String, String> getMapHeaders(@NotNull Header[] headers) {
         Map<String, String> mapHeaders = new HashMap<>(headers.length);
         for (Header header : headers) {
             mapHeaders.put(header.getName(), header.getValue());
@@ -122,7 +123,7 @@ public class WebRequest extends Web {
 
     @Nullable
     public String getHost() {
-        String host = headers.getOrDefault("Host", "");
+        String host = headers.getOrDefault(HOST, "");
         if (host.indexOf(':') != -1) {
             host = host.substring(0, host.indexOf(':'));
         }
@@ -164,9 +165,6 @@ public class WebRequest extends Web {
                 ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
                 httpPatch.setEntity(byteArrayEntity);
                 return httpPatch;
-            }
-            case CONNECT: {
-                return null;
             }
             default: {
                 return null;
@@ -212,7 +210,7 @@ public class WebRequest extends Web {
             } else {// connect method
                 webResponse.setStatusCode(HttpServletResponse.SC_OK);
                 webResponse.setReasonPhrase("OK");
-                webResponse.setVersion("HTTP/1.1");
+                webResponse.setVersion(HTTP_1_1.toString());
             }
         }
         return webResponse;
@@ -236,19 +234,19 @@ public class WebRequest extends Web {
             WebResponse webResponse = new WebResponse();
             webResponse.setStatusCode(HttpServletResponse.SC_OK);
             webResponse.setReasonPhrase("OK");
-            webResponse.setVersion("HTTP/1.1");
+            webResponse.setVersion(HTTP_1_1.toString());
             return webResponse;
         }
     }
 
-    private void parseStartLine(WebResponse webResponse, String startLine) {
+    private void parseStartLine(@NotNull WebResponse webResponse, @NotNull String startLine) {
         String[] startLineParameters = startLine.split(" ");
         webResponse.setVersion(startLineParameters[0]);
         webResponse.setStatusCode(Integer.parseInt(startLineParameters[1]));
         webResponse.setReasonPhrase(startLineParameters[2]);
     }
 
-    private void parseHeader(WebResponse webResponse, String header) {
+    private void parseHeader(WebResponse webResponse, @NotNull String header) {
         int idx = header.indexOf(":");
         if (idx == -1) {
             LOGGER.error("Некорректный параметр заголовка: " + header);
@@ -297,26 +295,14 @@ public class WebRequest extends Web {
         }
     }
 
-    @SuppressWarnings("Duplicates")
     private byte[] getAllRequestInBytes() {
-        byte[] result = null;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
-            stringBuilder.get().append(getMethod()).append(" ").append(getURI()).append(" ").append(getVersion()).append(CRLF);
-            for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
-                stringBuilder.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CRLF);
-            }
-            stringBuilder.get().append(CRLF);
-            byteArrayOutputStream.write(stringBuilder.toString().getBytes());
-            if (body != null) {
-                byteArrayOutputStream.write(body);
-            }
-            byteArrayOutputStream.flush();
-            result = byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return result;
+        return getHttpMessageInBytes(
+                s -> s.append(getMethod()).append(" ")
+                        .append(getURI()).append(" ")
+                        .append(getVersion()).append(CRLF),
+                body,
+                headers.entrySet()
+        );
     }
 
     public String getMethod() {
@@ -327,7 +313,7 @@ public class WebRequest extends Web {
         this.method = method;
     }
 
-    public String getURI() {
+    private String getURI() {
         return URI;
     }
 
@@ -335,7 +321,7 @@ public class WebRequest extends Web {
         this.URI = URI;
     }
 
-    public String getVersion() {
+    private String getVersion() {
         return version;
     }
 
@@ -343,7 +329,7 @@ public class WebRequest extends Web {
         this.version = version;
     }
 
-    public Map<String, String> getHeaders() {
+    private Map<String, String> getHeaders() {
         return headers;
     }
 

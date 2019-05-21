@@ -1,6 +1,7 @@
 package servlets;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import proxy.Proxy;
 
@@ -23,7 +24,7 @@ public class SettingsProxyServlet extends HttpServlet {
     private Proxy proxy = Proxy.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(HttpServletRequest request, @NotNull HttpServletResponse response) {
         try (Writer writer = response.getWriter()) {
             Map<String, String> settings = getAllSettings();
             response.setCharacterEncoding(UTF_8.toString());
@@ -35,7 +36,7 @@ public class SettingsProxyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(@NotNull HttpServletRequest request, HttpServletResponse response) {
         try (BufferedReader reader = request.getReader()) {
             request.setCharacterEncoding(UTF_8.toString());
             JSONObject settingsJson = new JSONObject(reader.lines().collect(Collectors.joining(System.lineSeparator())));
@@ -52,8 +53,7 @@ public class SettingsProxyServlet extends HttpServlet {
         }
     }
 
-    @SuppressWarnings("Duplicates")
-    private void saveSettingsWithValidation(JSONObject settingsJson) {
+    private void saveSettingsWithValidation(@NotNull JSONObject settingsJson) {
         int httpProxyPort = settingsJson.has(HTTP_PROXY_PORT) ?
                 settingsJson.optInt(HTTP_PROXY_PORT, DEFAULT_HTTP_PROXY_PORT) :
                 DEFAULT_HTTP_PROXY_PORT;

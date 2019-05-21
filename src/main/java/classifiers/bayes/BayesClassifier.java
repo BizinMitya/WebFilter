@@ -1,6 +1,7 @@
 package classifiers.bayes;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.tartarus.snowball.ext.RussianStemmer;
 import util.FileUtil;
 
@@ -52,7 +53,7 @@ public abstract class BayesClassifier {
      * @param words набор слов (документ)
      * @return ассоциативный массив категория -> вероятность попадания набора слов (документа) в эту категорию
      */
-    public static Map<String, Double> classify(List<String> words) {
+    public static Map<String, Double> classify(@NotNull List<String> words) {
         RussianStemmer russianStemmer = new RussianStemmer();
         words.removeIf(s -> s.length() < 4);
         for (int i = 0; i < words.size(); i++) {

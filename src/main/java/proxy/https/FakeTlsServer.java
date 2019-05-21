@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FakeTlsServer extends DefaultTlsServer {
+class FakeTlsServer extends DefaultTlsServer {
 
     private static final Logger LOGGER = Logger.getLogger(FakeTlsServer.class);
     private static final Map<String, FakeCertificate> CERTIFICATE_CACHE = new ConcurrentHashMap<>();

@@ -4,7 +4,7 @@ import classifiers.bayes.BayesClassifier;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 
 import java.io.ByteArrayOutputStream;
@@ -12,22 +12,21 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.apache.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.apache.http.entity.ContentType.TEXT_HTML;
 import static org.apache.lucene.util.IOUtils.UTF_8;
 import static org.eclipse.jetty.http.HttpHeaderValue.IDENTITY;
-import static org.json.HTTP.CRLF;
+import static org.eclipse.jetty.util.StringUtil.CRLF;
 import static util.FileUtil.getHostInBlacklistPage;
 
 public class WebResponse extends Web {
 
-    private static final Logger LOGGER = Logger.getLogger(WebResponse.class);
     private int statusCode;
     private String reasonPhrase;
     private String bodyEncoding;
@@ -44,7 +43,7 @@ public class WebResponse extends Web {
         WebResponse webResponse = new WebResponse();
         webResponse.setStatusCode(SC_OK);
         webResponse.setReasonPhrase("");
-        webResponse.setVersion("HTTP/1.1");
+        webResponse.setVersion(HTTP_1_1.toString());
         webResponse.setHeaders(new HashMap<>());
         webResponse.getHeaders().put(TRANSFER_ENCODING, IDENTITY.toString());
         byte[] body = getHostInBlacklistPage();
@@ -67,7 +66,16 @@ public class WebResponse extends Web {
         return BayesClassifier.classify(words);
     }
 
-    public void createProbabilitiesPage(Map<String, Double> categoryProbabilityMap) {
+    public byte[] getAllResponseInBytes() {
+        return getHttpMessageInBytes(
+                s -> s.append(getVersion()).append(" ")
+                        .append(getStatusCode()).append(" ")
+                        .append(getReasonPhrase()).append(CRLF),
+                body,
+                headers.entrySet());
+    }
+
+    public void createProbabilitiesPage(@NotNull Map<String, Double> categoryProbabilityMap) {
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream();
              OutputStreamWriter writer = new OutputStreamWriter(buffer)) {
             Configuration configuration = new Configuration(Configuration.VERSION_2_3_28);
@@ -81,7 +89,7 @@ public class WebResponse extends Web {
             writer.flush();
             setStatusCode(SC_OK);
             setReasonPhrase("");
-            setVersion("HTTP/1.1");
+            setVersion(HTTP_1_1.toString());
             setHeaders(new HashMap<>());
             getHeaders().put(TRANSFER_ENCODING, IDENTITY.toString());
             setBody(buffer.toByteArray());
@@ -96,28 +104,6 @@ public class WebResponse extends Web {
 
     public void setBodyEncoding(String bodyEncoding) {
         this.bodyEncoding = bodyEncoding;
-    }
-
-    @SuppressWarnings("Duplicates")
-    public byte[] getAllResponseInBytes() {
-        byte[] result = null;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
-            stringBuilder.get().append(getVersion()).append(" ").append(getStatusCode()).append(" ").append(getReasonPhrase()).append(CRLF);
-            for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
-                stringBuilder.get().append(entry.getKey()).append(": ").append(entry.getValue()).append(CRLF);
-            }
-            stringBuilder.get().append(CRLF);
-            byteArrayOutputStream.write(stringBuilder.toString().getBytes());
-            if (body != null) {
-                byteArrayOutputStream.write(body);
-            }
-            byteArrayOutputStream.flush();
-            result = byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return result;
     }
 
     public String getVersion() {

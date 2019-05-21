@@ -4,6 +4,7 @@ import model.WebRequest;
 import model.WebResponse;
 import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.tls.TlsServerProtocol;
+import org.jetbrains.annotations.NotNull;
 import proxy.ProxyHandler;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,17 +17,18 @@ import java.security.SecureRandom;
 
 import static dao.SettingsDAO.*;
 import static model.WebRequest.readWebRequest;
+import static org.apache.http.HttpVersion.HTTP_1_1;
 
 /**
  * Поток для клиента HTTPS прокси-сервера
  */
-public class HttpsClientProxyThread implements Runnable {
+class HttpsClientProxyThread implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(HttpsClientProxyThread.class);
 
     private Socket socket;
 
-    public HttpsClientProxyThread(Socket socket) throws SocketException {
+    HttpsClientProxyThread(@NotNull Socket socket) throws SocketException {
         String timeoutForClientString = getSettingByKey(TIMEOUT_FOR_CLIENT, String.valueOf(DEFAULT_TIMEOUT_FOR_CLIENT));
         int timeoutForClient = Integer.parseInt(timeoutForClientString);
         socket.setSoTimeout(timeoutForClient);
@@ -77,11 +79,11 @@ public class HttpsClientProxyThread implements Runnable {
         }
     }
 
-    private void sendOkToConnect(Socket sslSocket) throws IOException {
+    private void sendOkToConnect(@NotNull Socket sslSocket) throws IOException {
         WebResponse webResponse = new WebResponse();
         webResponse.setStatusCode(HttpServletResponse.SC_OK);
         webResponse.setReasonPhrase("OK");
-        webResponse.setVersion("HTTP/1.1");
+        webResponse.setVersion(HTTP_1_1.toString());
         sslSocket.getOutputStream().write(webResponse.getAllResponseInBytes());
         sslSocket.getOutputStream().flush();
     }

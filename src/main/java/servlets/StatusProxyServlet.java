@@ -1,6 +1,7 @@
 package servlets;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import proxy.Proxy;
 
 import javax.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ public class StatusProxyServlet extends HttpServlet {
     private Proxy proxy = Proxy.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(HttpServletRequest request, @NotNull HttpServletResponse response) {
         try (Writer writer = response.getWriter()) {
             response.setCharacterEncoding(UTF_8.toString());
             writer.write("[" + proxy.isRunningHttp() + ", " + proxy.isRunningHttps() + "]");

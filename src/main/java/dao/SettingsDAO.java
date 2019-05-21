@@ -2,6 +2,7 @@ package dao;
 
 import db.JDBC;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,7 +73,6 @@ public abstract class SettingsDAO {
         }
     }
 
-    @SuppressWarnings("Duplicates")
     public static void addDefaultData() {
         if (!hasKey(HTTP_PROXY_PORT)) {
             addSetting(HTTP_PROXY_PORT, String.valueOf(DEFAULT_HTTP_PROXY_PORT));
@@ -124,7 +124,7 @@ public abstract class SettingsDAO {
         return allSettings;
     }
 
-    public static void updateAllSettings(Map<String, String> allSettings) {
+    public static void updateAllSettings(@NotNull Map<String, String> allSettings) {
         for (Map.Entry<String, String> entry : allSettings.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();

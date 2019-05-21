@@ -1,12 +1,24 @@
 package model;
 
-public abstract class Web {
+import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+
+import static org.json.HTTP.CRLF;
+
+abstract class Web {
 
     protected static final String CONTENT = "content";
     private static final String CHARSET = "charset";
-    private static final String HTTP_EQUIV = "http-equiv";
+    private static final Logger LOGGER = Logger.getLogger(Web.class);
 
-    String getCharsetFromContentType(String contentType) {
+    String getCharsetFromContentType(@NotNull String contentType) {
         String[] values = contentType.split("; ");
         for (String value : values) {
             if (value.startsWith(CHARSET)) {
@@ -16,7 +28,7 @@ public abstract class Web {
         return null;
     }
 
-    String getMimeTypeFromContentType(String contentType) {
+    String getMimeTypeFromContentType(@NotNull String contentType) {
         String[] values = contentType.split("; ");
         for (String value : values) {
             if (!value.startsWith(CHARSET)) {
@@ -26,29 +38,27 @@ public abstract class Web {
         return null;
     }
 
-   /* String getEncoding(byte[] body, String contentType) {
-        if (contentType != null) {
-            String charset = getCharsetFromContentType(contentType);
-            if (charset != null) {
-                return charset;
+    byte[] getHttpMessageInBytes(@NotNull Consumer<StringBuilder> buildStartLine,
+                                 byte[] body,
+                                 @NotNull Set<Map.Entry<String, String>> headers) {
+        byte[] result = null;
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            AtomicReference<StringBuilder> stringBuilder = new AtomicReference<>(new StringBuilder());
+            buildStartLine.accept(stringBuilder.get());
+            for (Map.Entry<String, String> entry : headers) {
+                stringBuilder.getAndUpdate(s -> s.append(entry.getKey()).append(": ").append(entry.getValue()).append(CRLF));
             }
-        }
-        if (TEXT_HTML.getMimeType().equals(contentType)) {
-            Elements charsetElements = Jsoup.parse(new String(body)).head().getElementsByAttribute(CHARSET);
-            if (!charsetElements.isEmpty()) {
-                return charsetElements.get(0).attr(CHARSET);
-            } else {
-                Elements httpEquivElements = Jsoup.parse(new String(body)).head().getElementsByAttribute(HTTP_EQUIV);
-                if (!httpEquivElements.isEmpty()) {
-                    String content = httpEquivElements.get(0).attr(CONTENT);
-                    String charset = getCharsetFromContentType(content);
-                    if (charset != null) {
-                        return charset;
-                    }
-                }
+            stringBuilder.getAndUpdate(s -> s.append(CRLF));
+            byteArrayOutputStream.write(stringBuilder.toString().getBytes());
+            if (body != null) {
+                byteArrayOutputStream.write(body);
             }
+            byteArrayOutputStream.flush();
+            result = byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
         }
-        return UTF_8;
-    }*/
+        return result;
+    }
 
 }

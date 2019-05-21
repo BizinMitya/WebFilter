@@ -2,6 +2,7 @@ package servlets;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import util.CertUtil;
 
 import javax.servlet.http.HttpServlet;
@@ -16,7 +17,7 @@ public class DownloadRootCertificateServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(DownloadRootCertificateServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doGet(HttpServletRequest request, @NotNull HttpServletResponse response) {
         try (InputStream inputStream = DownloadRootCertificateServlet.class.getResourceAsStream("/cert/" + CertUtil.WEB_FILTER_ROOT_CRT);
              OutputStream outputStream = response.getOutputStream()) {
             byte[] rootCertificateBytes = IOUtils.toByteArray(inputStream);
